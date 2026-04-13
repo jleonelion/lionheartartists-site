@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="LionHeart Artists – boutique management for young performers ages 4-18 in Los Angeles. Personalized representation with integrity, grit, and heart.">
+<meta name="theme-color" content="#1A1A1A">
+<title>LionHeart Artists</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #C5A55A;
+  --gold-light: #D4BA7A;
+  --dark: #1A1A1A;
+  --darker: #111;
+  --cream: #FAF8F5;
+  --text: #333;
+  --text-light: #555;
+  --warm-overlay: rgba(26, 20, 10, 0.55);
+}
+
+html { font-size: 18px; scroll-behavior: smooth; }
+body { font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif; color: var(--text); background: var(--cream); }
+h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; }
+main { outline: none; }
+
+/* SKIP LINK */
+.skip-link { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); background: var(--gold); color: var(--dark); padding: 0.5rem 1rem; z-index: 200; font-size: 0.8rem; border-radius: 0 0 4px 4px; }
+.skip-link:focus { top: 0; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 100;
+  background: rgb(0, 19, 54); backdrop-filter: blur(10px);
+  padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between;
+}
+nav img { height: 70px; margin: -12px 0; }
+nav ul { list-style: none; display: flex; gap: 2rem; }
+nav a { color: #fff; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; transition: color 0.3s; }
+nav a:hover, nav a.active { color: var(--gold); }
+.nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  color: #fff; padding: 6rem 2rem 4rem; position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: url('https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?w=1600&q=80') center/cover no-repeat;
+}
+.hero-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(15,12,8,0.82) 0%, rgba(30,25,15,0.7) 50%, rgba(15,12,8,0.85) 100%);
+}
+.hero-content { position: relative; z-index: 1; }
+.hero-logo { width: 260px; margin-bottom: 2rem; filter: drop-shadow(0 4px 30px rgba(197,165,90,0.3)); }
+.hero h1 { font-size: clamp(2.2rem, 5vw, 4.2rem); font-weight: 300; letter-spacing: 3px; line-height: 1.15; }
+.hero h1 span { color: var(--gold); }
+.hero .tagline {
+  font-size: clamp(0.95rem, 2vw, 1.25rem); font-weight: 300; margin-top: 1.5rem;
+  color: var(--gold-light); letter-spacing: 2px;
+}
+.hero .subtitle { font-size: 0.8rem; margin-top: 1rem; color: rgba(255,255,255,0.7); letter-spacing: 1px; }
+.hero-cta {
+  margin-top: 3.5rem;
+  display: inline-block; padding: 1rem 3rem; border: 1px solid var(--gold); color: var(--gold);
+  text-decoration: none; text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem;
+  transition: all 0.3s;
+}
+.hero-cta:hover { background: var(--gold); color: var(--dark); transform: translateY(-2px); }
+
+/* PHOTO BANNER */
+.photo-banner {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; height: 400px; overflow: hidden;
+}
+.photo-banner img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center center;
+  transition: transform 0.5s ease; filter: brightness(0.9);
+}
+.photo-banner img:hover { transform: scale(1.05); filter: brightness(1); }
+
+/* SECTIONS */
+section { padding: 6rem 2rem; }
+.section-title {
+  text-align: center; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 400; margin-bottom: 1rem;
+  letter-spacing: 2px;
+}
+.section-subtitle { text-align: center; color: var(--gold); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.5rem; }
+.divider { width: 80px; height: 2px; background: var(--gold); margin: 1.5rem auto 3rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+
+/* SCROLL ANIMATIONS */
+.fade-in { opacity: 0; transform: translateY(25px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  .fade-in { opacity: 1; transform: none; transition: none; }
+}
+
+/* ABOUT */
+.about { background: #fff; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1100px; margin: 0 auto; }
+.about-image { border-radius: 4px; overflow: hidden; }
+.about-gallery { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+.gallery-layout { 
+  position: relative; 
+  width: 400px; 
+  height: 400px; 
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 2fr 1fr;
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
+}
+.founder-photo { 
+  grid-column: 2; 
+  grid-row: 2; 
+  z-index: 2;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid var(--gold);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+.founder-photo img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  object-position: center;
+}
+.child-photo { 
+  width: 100px; 
+  height: 100px; 
+  border-radius: 50%; 
+  overflow: hidden;
+  border: 2px solid var(--gold-light);
+  transition: transform 0.3s ease;
+}
+.child-photo:hover {
+  transform: scale(1.1);
+}
+.child-photo img { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  object-position: center top;
+}
+.top-left { grid-column: 1; grid-row: 1; }
+.top-right { grid-column: 3; grid-row: 1; }
+.bottom-left { grid-column: 1; grid-row: 3; }
+.bottom-right { grid-column: 3; grid-row: 3; }
+.about-text { line-height: 1.9; color: var(--text-light); font-weight: 300; font-size: 0.95rem; }
+.about-text p { margin-bottom: 1.2rem; }
+.about-text strong { color: var(--text); font-weight: 500; }
+
+/* QUOTE */
+.quote-section {
+  background: url('assets/sesame-street-event.jpg') center 60%/cover no-repeat;
+  position: relative; text-align: center; padding: 8rem 2rem;
+  min-height: 800px;
+}
+.quote-section::after { content: ''; position: absolute; inset: 0; background: var(--warm-overlay); }
+.quote-content { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+.quote-content blockquote {
+  font-family: 'Cormorant Garamond', serif; font-size: clamp(1.5rem, 3vw, 2.2rem);
+  color: #fff; font-style: italic; font-weight: 300; line-height: 1.6;
+}
+.quote-content cite { display: block; margin-top: 1.5rem; color: var(--gold-light); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; font-style: normal; }
+
+/* SERVICES */
+.services { background: var(--cream); }
+.services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.service-card {
+  background: #fff; padding: 2.5rem; border: 1px solid #eee; transition: all 0.4s;
+  position: relative; overflow: hidden;
+}
+.service-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--gold); transform: scaleX(0); transition: transform 0.4s; transform-origin: left;
+}
+.service-card:hover::before { transform: scaleX(1); }
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
+.service-card h3 { font-size: 1.35rem; margin-bottom: 1rem; font-weight: 500; }
+.service-card p { color: var(--text-light); line-height: 1.7; font-weight: 300; font-size: 0.85rem; }
+.service-icon { width: 40px; height: 40px; margin-bottom: 1.2rem; }
+.service-icon svg { width: 100%; height: 100%; stroke: var(--gold); fill: none; stroke-width: 1.5; }
+
+/* IMPACT STRIP */
+.impact-strip {
+  background: var(--dark); color: #fff; padding: 4rem 2rem; text-align: center;
+}
+.impact-grid { display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap; max-width: 900px; margin: 0 auto; }
+.impact-item h3 { font-size: 2.5rem; color: var(--gold); font-weight: 300; }
+.impact-item p { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
+
+/* PHOTO + TEXT FEATURE */
+.feature-section { background: #fff; padding: 0; }
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 500px; }
+.feature-grid.reverse { direction: rtl; }
+.feature-grid.reverse > * { direction: ltr; }
+.feature-image { overflow: hidden; }
+.feature-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+.feature-image:hover img { transform: scale(1.03); }
+.feature-text {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 4rem; background: var(--cream);
+}
+.feature-text h2 { font-size: 2rem; font-weight: 400; margin-bottom: 1.5rem; letter-spacing: 1px; }
+.feature-text p { color: var(--text-light); line-height: 1.8; font-weight: 300; font-size: 0.9rem; margin-bottom: 1rem; }
+.feature-text .gold-accent { color: var(--gold); font-weight: 500; }
+
+/* INDUSTRIES */
+.industries { background: var(--dark); color: #fff; text-align: center; }
+.industries .section-title { color: #fff; }
+.ind-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 2rem; }
+.ind-item {
+  padding: 1rem 2rem; border: 1px solid rgba(197,165,90,0.3); font-size: 0.75rem;
+  letter-spacing: 2px; text-transform: uppercase; font-weight: 300; color: var(--gold-light);
+  transition: all 0.3s;
+}
+.ind-item:hover { border-color: var(--gold); background: rgba(197,165,90,0.1); }
+
+/* VALUES */
+.values { background: #fff; }
+.values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2.5rem; text-align: center; }
+.value-item h3 { font-size: 1.4rem; margin-bottom: 0.8rem; font-weight: 500; color: var(--dark); }
+.value-item p { color: var(--text-light); line-height: 1.7; font-weight: 300; font-size: 0.82rem; }
+.value-icon { margin-bottom: 1rem; }
+.value-icon svg { width: 48px; height: 48px; stroke: var(--gold); fill: none; stroke-width: 1.2; }
+
+/* SET PICTURES SECTION */
+.set-pictures {
+  background: var(--cream);
+  padding: 6rem 2rem;
+}
+.pictures-content { max-width: 1100px; margin: 0 auto; }
+.pictures-grid { 
+  display: grid; 
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+  gap: 2rem; 
+  margin-top: 3rem; 
+}
+.picture-card {
+  background: #fff; 
+  border-radius: 8px; 
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.picture-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+}
+.picture-card img { 
+  width: 100%; 
+  height: 250px; 
+  object-fit: cover; 
+  display: block;
+}
+.picture-caption {
+  padding: 2rem;
+}
+.picture-caption h4 { 
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem; 
+  color: var(--text); 
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+.picture-caption p { 
+  color: var(--text-light); 
+  line-height: 1.6; 
+  font-weight: 300; 
+  font-size: 0.9rem;
+}
+
+/* CONTACT */
+.contact { background: var(--cream); }
+.contact-intro { text-align: center; max-width: 550px; margin: 0 auto 2.5rem; color: var(--text-light); font-weight: 300; font-size: 0.85rem; line-height: 1.7; }
+.contact-form { max-width: 600px; margin: 0 auto; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.contact-form label { display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem; color: var(--text-light); }
+.contact-form input, .contact-form select, .contact-form textarea {
+  width: 100%; padding: 0.9rem 1rem; border: 1px solid #ddd; background: #fff;
+  font-family: 'Montserrat', sans-serif; font-size: 0.85rem; transition: all 0.3s;
+  outline: none;
+}
+.contact-form input:focus, .contact-form select:focus, .contact-form textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(197,165,90,0.12);
+}
+.contact-form .field { margin-bottom: 1.5rem; }
+.contact-form textarea { height: 120px; resize: vertical; }
+.submit-btn {
+  width: 100%; padding: 1rem; background: var(--dark); color: #fff; border: none;
+  text-transform: uppercase; letter-spacing: 3px; font-size: 0.7rem; cursor: pointer;
+  font-family: 'Montserrat', sans-serif; transition: all 0.3s;
+}
+.submit-btn:hover { background: var(--gold); color: var(--dark); transform: translateY(-1px); }
+
+/* FORM SUCCESS */
+.form-success {
+  text-align: center; padding: 3rem;
+  color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 1.4rem;
+  animation: fadeIn 0.6s ease;
+}
+
+/* FOOTER */
+footer {
+  background: var(--darker); color: #777; text-align: center; padding: 3rem 2rem;
+  font-size: 0.72rem; letter-spacing: 1px;
+}
+footer img { height: 40px; margin-bottom: 1rem; opacity: 0.7; }
+footer p { margin-top: 0.5rem; }
+footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; margin-bottom: 1rem; font-style: italic; }
+.social-links { margin: 1rem 0; display: flex; justify-content: center; gap: 1.2rem; }
+.social-links a { color: #777; transition: color 0.3s; }
+.social-links a:hover { color: var(--gold); }
+.social-links svg { width: 20px; height: 20px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* TABLET */
+@media (max-width: 1024px) {
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .values-grid { grid-template-columns: repeat(2, 1fr); }
+  .feature-grid { grid-template-columns: 1fr; }
+  .feature-image { height: 350px; }
+  .feature-text { padding: 3rem 2rem; }
+  .photo-banner { grid-template-columns: repeat(2, 1fr); height: 250px; }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .nav-toggle { display: block; }
+  nav ul { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: rgb(0, 19, 54); padding: 1rem 2rem; gap: 1rem; }
+  nav ul.open { display: flex; }
+  .form-row { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.5rem; }
+  .hero { padding: 5rem 1.5rem 3rem; }
+  .hero-logo { max-width: 180px; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .gallery-layout { 
+    width: 300px; 
+    height: 300px; 
+    gap: 8px; 
+  }
+  .founder-photo { 
+    width: 120px; 
+    height: 120px; 
+  }
+  .child-photo { 
+    width: 60px; 
+    height: 60px; 
+  }
+  .pictures-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .social-links { gap: 1.5rem; }
+  .social-links svg { width: 20px; height: 20px; }
+  .photo-banner { grid-template-columns: 1fr 1fr; height: 200px; }
+  .impact-grid { gap: 2rem; }
+  .feature-grid, .feature-grid.reverse { direction: ltr; }
+  .feature-image { height: 300px; }
+  .services-grid { grid-template-columns: 1fr; }
+  .values-grid { grid-template-columns: 1fr 1fr; }
+  .pictures-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<nav>
+  <img src="assets/logo-nav-tight.png" alt="LionHeart Artists - Home">
+  <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" onclick="toggleNav()">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#industries">What We Represent</a></li>
+    <li><a href="#values">Values</a></li>
+    <li><a href="#apply">Apply</a></li>
+  </ul>
+</nav>
+
+<main id="main-content">
+
+<!-- HERO with cinematic background -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <img src="assets/logo-icon.png" alt="LionHeart Artists" class="hero-logo">
+    <h1>Lion<span>Heart</span> Artists</h1>
+    <p class="tagline">Elevating young talent with integrity, grit, and heart.</p>
+    <a href="#apply" class="hero-cta">Begin Your Journey</a>
+  </div>
+</section>
+
+<!-- PHOTO BANNER - human connection moments -->
+<div class="photo-banner">
+  <img src="assets/child-actor-1.jpg" alt="Young child actor on set" loading="lazy">
+  <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&q=80" alt="Film clapperboard on set" loading="lazy">
+  <img src="assets/child-actor-3.jpg" alt="Young child actor on CSI Cyber set" loading="lazy" style="object-position: center 60%;">
+  <img src="https://images.unsplash.com/photo-1515896769750-31548aa180ed?w=600&q=80" alt="Hollywood Walk of Fame star" loading="lazy">
+</div>
+
+<!-- ABOUT with side-by-side photo -->
+<section class="about" id="about">
+  <p class="section-subtitle">Our Story</p>
+  <h2 class="section-title">Where Dreams Take Center Stage</h2>
+  <div class="divider"></div>
+  <div class="about-grid">
+    <div class="about-gallery fade-in">
+      <div class="gallery-layout">
+        <div class="child-photo top-left">
+          <img src="assets/child-headshot-4.jpg" alt="LionHeart talent - professional child actor headshot" loading="lazy">
+        </div>
+        <div class="child-photo top-right">
+          <img src="assets/child-headshot-2.jpg" alt="LionHeart talent - professional child actor headshot" loading="lazy">
+        </div>
+        <div class="founder-photo">
+          <img src="assets/lisa-leone-headshot.jpg" alt="Lisa Leone, Founder of LionHeart Artists" loading="lazy">
+        </div>
+        <div class="child-photo bottom-left">
+          <img src="assets/child-headshot-new.jpg" alt="LionHeart talent - professional child actor headshot" loading="lazy">
+        </div>
+        <div class="child-photo bottom-right">
+          <img src="assets/child-headshot-1.jpg" alt="LionHeart talent - professional child actor headshot" loading="lazy">
+        </div>
+      </div>
+    </div>
+    <div class="about-text fade-in">
+      <p><strong>LionHeart Artists</strong> was founded by <strong>Lisa Leone</strong> with a simple belief: every actor deserves someone in their corner who sees their potential and fiercely protects their spark.</p>
+      <p>Based in Los Angeles, we're a boutique talent management firm specializing in performers ages 4–18. We offer representation, mentoring and coaching, audition preparation, and career guidance. We represent talent across the board: from print and commercial to tv/film, voiceover and influencer personalities as well!</p>
+      <p>Our intentionally small roster means your family isn't just another name on a list. We get to know your child, understand their dreams, and walk alongside you every step of the way, because behind every young star is a family who believed, encouraged, and supported them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSPIRATIONAL QUOTE -->
+<div class="quote-section">
+  <div class="quote-content fade-in">
+    <blockquote>"Success in this industry isn't just about booking roles. It's about building careers with integrity, relationships with heart, and futures with purpose."</blockquote>
+    <cite>— Lisa Leone, Founder</cite>
+  </div>
+</div>
+
+<!-- FEATURE: The Set Experience -->
+<section class="feature-section">
+  <div class="feature-grid">
+    <div class="feature-image">
+      <img src="assets/red-carpet.jpg" alt="Young talent on the red carpet at a Hollywood premiere" loading="lazy">
+    </div>
+    <div class="feature-text fade-in">
+      <h2>The Magic of the Set</h2>
+      <p>There's nothing quite like watching a child walk onto a set for the first time — eyes wide, heart pounding, ready to create something extraordinary.</p>
+      <p>We prepare our young talent not just for the audition, but for <span class="gold-accent">the moment the cameras roll and onto the red carpet</span>. From understanding the rhythm of a professional set to building genuine relationships with directors and crew, your child will feel confident, prepared, and excited, because when kids feel safe and supported, that's when the real magic happens.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE: Family First (reversed) -->
+<section class="feature-section">
+  <div class="feature-grid reverse">
+    <div class="feature-image">
+      <img src="assets/recording-studio.jpg" alt="LionHeart talent in professional recording studio doing voice work with headphones" loading="lazy">
+    </div>
+    <div class="feature-text fade-in">
+      <h2>Family First, Always</h2>
+      <p>At LionHeart, we never lose sight of what matters most: <span class="gold-accent">your child's well-being and your family's peace of mind</span>.</p>
+      <p>We educate parents on the realities of the industry, keep communication open and honest, and make sure every opportunity aligns with your family's values. No surprises, no pressure — just a trusted partner who's as invested in your actor's happiness and success as you are.</p>
+      <p>This isn't just business. It's a relationship built on trust, heart, and shared purpose.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <p class="section-subtitle">What We Offer</p>
+  <h2 class="section-title">Our Services</h2>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="services-grid">
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <h3>Talent Representation</h3>
+        <p>Career guidance, audition sourcing, and strategic positioning to help your child shine in a competitive industry.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <h3>Review & Consultation</h3>
+        <p>Professional guidance and consultation to help protect your child's interests with transparent advice.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>Brand Development</h3>
+        <p>Image consulting and professional presentation to build a compelling, authentic personal brand.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3>Parent Education</h3>
+        <p>Guidance and resources so you can navigate the entertainment industry with confidence and make the best decisions for your family.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+        <h3>Coaching & Readiness</h3>
+        <p>Confidence building, mindset coaching, professional etiquette, and performance coaching partnerships.</p>
+      </div>
+      <div class="service-card fade-in">
+        <div class="service-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3>Long-Term Planning</h3>
+        <p>Strategic career roadmaps that grow with your child — from first bookings through lasting success.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT NUMBERS -->
+<div class="impact-strip fade-in">
+  <div class="impact-grid">
+    <div class="impact-item">
+      <h3>4–18</h3>
+      <p>Ages Represented</p>
+    </div>
+    <div class="impact-item">
+      <h3>100%</h3>
+      <p>Family-Centered</p>
+    </div>
+    <div class="impact-item">
+      <h3>Boutique</h3>
+      <p>Intentionally Small Roster</p>
+    </div>
+    <div class="impact-item">
+      <h3>Nationwide</h3>
+    </div>
+  </div>
+</div>
+
+<!-- INDUSTRIES -->
+<section class="industries" id="industries">
+  <p class="section-subtitle">Our Focus Areas</p>
+  <h2 class="section-title">What We Represent</h2>
+  <div class="divider"></div>
+  <div class="ind-grid">
+    <div class="ind-item fade-in">Film & Television</div>
+    <div class="ind-item fade-in">Commercial & Print</div>
+    <div class="ind-item fade-in">Digital Creators</div>
+    <div class="ind-item fade-in">Performing Arts</div>
+  </div>
+</section>
+
+<!-- VALUES with SVG icons -->
+<section class="values" id="values">
+  <p class="section-subtitle">What Guides Us</p>
+  <h2 class="section-title">Our Pillars</h2>
+  <div class="divider"></div>
+  <div class="container">
+    <div class="values-grid">
+      <div class="value-item fade-in">
+        <div class="value-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Integrity</h3>
+        <p>Transparency and honesty in every interaction. We do what's right for the child, always.</p>
+      </div>
+      <div class="value-item fade-in">
+        <div class="value-icon"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3>Heart</h3>
+        <p>Genuine care for every family. Your child is more than a client — they're part of our pride.</p>
+      </div>
+      <div class="value-item fade-in">
+        <div class="value-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Grit</h3>
+        <p>Relentless dedication and perseverance. We advocate fiercely and never settle for less.</p>
+      </div>
+      <div class="value-item fade-in">
+        <div class="value-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+        <h3>Purpose</h3>
+        <p>Every decision is intentional. We build careers with meaning, not just bookings.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SET PICTURES -->
+<section class="set-pictures">
+  <div class="pictures-content">
+    <p class="section-subtitle">Behind the Scenes</p>
+    <h2 class="section-title">Pictures from Set</h2>
+    <div class="divider"></div>
+    <div class="pictures-grid">
+      <div class="picture-card fade-in">
+        <img src="assets/patrick-dempsey.jpg" alt="LionHeart talent with Patrick Dempsey on set" loading="lazy">
+        <div class="picture-caption">
+          <h4>Working with A-List Stars</h4>
+          <p>Our young actress on set with Patrick Dempsey (Grey's Anatomy)</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/camera-monitor.jpg" alt="LionHeart talent viewed on professional camera monitor during filming" loading="lazy">
+        <div class="picture-caption">
+          <h4>Professional Film Production</h4>
+          <p>Behind the camera view during active filming</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/radio-disney-red-carpet.jpg" alt="LionHeart talent at Radio Disney Music Awards red carpet event" loading="lazy">
+        <div class="picture-caption">
+          <h4>Radio Disney Music Awards</h4>
+          <p>Red carpet experience at major Disney industry events</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/nickelodeon-event.jpg" alt="LionHeart talent at Nickelodeon industry event" loading="lazy">
+        <div class="picture-caption">
+          <h4>Nickelodeon Experience</h4>
+          <p>Behind the scenes at iconic network productions</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/set-actress.jpg" alt="LionHeart talent with professional actress on commercial set" loading="lazy">
+        <div class="picture-caption">
+          <h4>Commercial Productions</h4>
+          <p>Working alongside established industry professionals</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/holiday-production.jpg" alt="LionHeart talent in holiday television production" loading="lazy">
+        <div class="picture-caption">
+          <h4>Holiday Specials</h4>
+          <p>Seasonal productions and family entertainment projects</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/recording-studio.jpg" alt="LionHeart talent in professional recording studio" loading="lazy">
+        <div class="picture-caption">
+          <h4>Voice Acting Sessions</h4>
+          <p>Professional recording work in state-of-the-art studios</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/disney-print-campaign.jpg" alt="LionHeart talent featured in Disney holiday print advertising campaign" loading="lazy">
+        <div class="picture-caption">
+          <h4>Disney Print Campaigns</h4>
+          <p>Featured in major Disney holiday advertising and print materials</p>
+        </div>
+      </div>
+      <div class="picture-card fade-in">
+        <img src="assets/chess-scene.jpg" alt="LionHeart talent with co-star during break in filming" loading="lazy">
+        <div class="picture-caption">
+          <h4>Between Takes</h4>
+          <p>Building relationships with co-stars and crew off-camera</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / APPLY -->
+<section class="contact" id="apply">
+  <p class="section-subtitle">Currently Accepting Applications</p>
+  <h2 class="section-title">Let's Connect</h2>
+  <div class="divider"></div>
+  <p class="contact-intro">We'd love to learn about your child and your family's vision. Fill out the form below and we'll be in touch to start a conversation.</p>
+  <form class="contact-form" id="apply-form">
+    <div class="form-row">
+      <div class="field">
+        <label for="parent-name">Parent/Guardian Name *</label>
+        <input type="text" id="parent-name" required placeholder="Full name">
+      </div>
+      <div class="field">
+        <label for="email">Email *</label>
+        <input type="email" id="email" required placeholder="Email address">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="phone">Phone <span style="opacity:0.5">(optional)</span></label>
+        <input type="tel" id="phone" placeholder="Phone number">
+      </div>
+      <div class="field">
+        <label for="child-name">Child's First Name *</label>
+        <input type="text" id="child-name" required placeholder="First name">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="child-age">Child's Age *</label>
+        <input type="text" id="child-age" required placeholder="Age(s)">
+      </div>
+    </div>
+    <div class="field">
+      <label for="interest">Area of Interest <span style="opacity:0.5">(optional)</span></label>
+      <select id="interest">
+        <option value="">Select an industry</option>
+        <option>Film & Television</option>
+        <option>Commercial & Print</option>
+        <option>Digital Creators & Influencers</option>
+        <option>Performing Arts</option>
+        <option>Multiple / Not Sure</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="about-child">Tell Us About Your Child</label>
+      <textarea id="about-child" placeholder="Their experience, interests, and what makes them special..."></textarea>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label for="headshot">Headshot Photo *</label>
+        <input type="file" id="headshot" accept="image/*" required>
+      </div>
+      <div class="field">
+        <label for="full-length">Full-Length Photo *</label>
+        <input type="file" id="full-length" accept="image/*" required>
+      </div>
+    </div>
+    <button type="submit" class="submit-btn">Start the Conversation</button>
+  </form>
+</section>
+
+</main>
+
+<footer>
+  <img src="assets/logo-nav.png" alt="LYTM" loading="lazy">
+  <p class="footer-tagline">"Elevating young talent with integrity, grit, and heart."</p>
+  <div class="social-links">
+    <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+    <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+  </div>
+  <p>&copy; 2026 LionHeart Artists. All rights reserved.</p>
+  <p>Los Angeles, California</p>
+</footer>
+
+<script>
+// Nav toggle
+function toggleNav() {
+  const ul = document.querySelector('nav ul');
+  const btn = document.querySelector('.nav-toggle');
+  ul.classList.toggle('open');
+  btn.setAttribute('aria-expanded', ul.classList.contains('open'));
+}
+// Close nav on link click (mobile)
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelector('nav ul').classList.remove('open');
+    document.querySelector('.nav-toggle').setAttribute('aria-expanded', 'false');
+  });
+});
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Active nav link
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (scrollY >= top) current = section.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+  });
+});
+
+// Form submission
+document.getElementById('apply-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  this.style.transition = 'opacity 0.3s';
+  this.style.opacity = '0';
+  setTimeout(() => {
+    this.innerHTML = '<div class="form-success">Thank you for reaching out.<br>We look forward to learning about your child.</div>';
+    this.style.opacity = '1';
+  }, 300);
+});
+</script>
+
+</body>
+</html>
