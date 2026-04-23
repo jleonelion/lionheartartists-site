@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Apply for representation with LionHeart Artists — boutique talent management for young performers ages 4-18 in Los Angeles.">
+<meta name="theme-color" content="#1A1A1A">
+<title>Apply for Representation — LionHeart Artists</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #C5A55A;
+  --gold-light: #D4BA7A;
+  --dark: #1A1A1A;
+  --darker: #111;
+  --cream: #FAF8F5;
+  --text: #333;
+  --text-light: #555;
+  --border: #E5DFD2;
+  --error: #B04343;
+}
+
+html { font-size: 18px; scroll-behavior: smooth; }
+body { font-family: 'Montserrat', 'Segoe UI', system-ui, sans-serif; color: var(--text); background: var(--cream); line-height: 1.6; }
+h1, h2, h3 { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-weight: 500; letter-spacing: 1px; }
+a { color: var(--gold); }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgb(0, 19, 54);
+  padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between;
+}
+nav img { height: 60px; margin: -8px 0; }
+nav a.back-link { color: #fff; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s; }
+nav a.back-link:hover { color: var(--gold); }
+
+/* HEADER */
+header.page-header {
+  background: var(--dark); color: #fff;
+  padding: 5rem 2rem 4rem; text-align: center;
+}
+header.page-header p.eyebrow { color: var(--gold); font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.75rem; }
+header.page-header h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 400; letter-spacing: 2px; }
+header.page-header .divider { width: 80px; height: 2px; background: var(--gold); margin: 1.5rem auto; }
+header.page-header p.lead { font-size: 0.95rem; font-weight: 300; color: rgba(255,255,255,0.8); max-width: 640px; margin: 0 auto; line-height: 1.7; }
+
+/* PHONE CALLOUT */
+.phone-callout {
+  max-width: 500px; margin: 2.5rem auto 0;
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.5rem; border: 1px solid rgba(197,165,90,0.35); border-radius: 4px;
+  background: rgba(197,165,90,0.08); color: rgba(255,255,255,0.9);
+  text-align: left;
+}
+.phone-callout svg { color: var(--gold); flex-shrink: 0; }
+.phone-callout-label { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.25rem; }
+.phone-callout-number a { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #fff; text-decoration: none; letter-spacing: 1px; }
+
+/* FORM */
+main { max-width: 760px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
+.form-intro { text-align: center; margin-bottom: 3rem; color: var(--text-light); font-size: 0.95rem; }
+.form-intro .required-note { display: block; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-light); font-style: italic; }
+
+.form-section {
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  padding: 2rem 2rem 1.5rem; margin-bottom: 1.5rem;
+}
+.form-section h2 {
+  font-size: 1.5rem; color: var(--dark); margin-bottom: 0.35rem;
+  padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);
+}
+.form-section .section-hint {
+  font-size: 0.8rem; color: var(--text-light); margin-bottom: 1.5rem; font-style: italic;
+}
+
+.field { margin-bottom: 1.25rem; }
+.field.inline-row { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+.field.inline-row .sub-field { margin-bottom: 0; }
+label {
+  display: block; font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text); margin-bottom: 0.5rem; font-weight: 500;
+}
+label .optional { color: var(--text-light); font-weight: 400; text-transform: none; letter-spacing: 0.5px; font-size: 0.75rem; font-style: italic; }
+label .required-mark { color: var(--gold); margin-left: 0.15rem; }
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="url"], input[type="date"], select, textarea {
+  width: 100%; padding: 0.75rem 0.9rem; border: 1px solid var(--border); border-radius: 3px;
+  font-family: inherit; font-size: 0.95rem; color: var(--text); background: #fff;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+textarea { min-height: 120px; resize: vertical; }
+input[type="file"] {
+  width: 100%; padding: 0.7rem; border: 1px dashed var(--border); border-radius: 3px;
+  font-size: 0.85rem; background: var(--cream);
+}
+
+.field-hint { font-size: 0.78rem; color: var(--text-light); margin-top: 0.4rem; line-height: 1.5; }
+
+.checkbox-field { display: flex; align-items: flex-start; gap: 0.75rem; }
+.checkbox-field input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--gold); flex-shrink: 0; }
+.checkbox-field label { margin: 0; text-transform: none; letter-spacing: normal; font-size: 0.88rem; font-weight: 400; line-height: 1.6; color: var(--text); }
+
+.turnstile-wrapper { margin: 1.5rem 0; display: flex; justify-content: center; }
+
+.submit-btn {
+  display: block; width: 100%; padding: 1.1rem 2rem;
+  background: var(--dark); color: #fff; border: 1px solid var(--dark);
+  font-family: inherit; font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.3s; border-radius: 3px;
+}
+.submit-btn:hover:not(:disabled) { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+.submit-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.status-message {
+  margin-top: 1.5rem; padding: 1rem 1.25rem; border-radius: 3px;
+  font-size: 0.9rem; display: none;
+}
+.status-message.error { background: #FBEAEA; border: 1px solid #E5B8B8; color: var(--error); display: block; }
+.status-message.info { background: rgba(197,165,90,0.12); border: 1px solid rgba(197,165,90,0.35); color: var(--text); display: block; }
+
+.success-panel {
+  text-align: center; padding: 3rem 2rem;
+  background: #fff; border: 1px solid var(--border); border-radius: 6px;
+  display: none;
+}
+.success-panel.visible { display: block; }
+.success-panel h2 { font-size: 2rem; color: var(--dark); margin-bottom: 1rem; }
+.success-panel p { color: var(--text-light); margin-bottom: 1rem; font-size: 0.95rem; }
+.success-panel .divider { width: 60px; height: 2px; background: var(--gold); margin: 1.25rem auto; }
+
+/* FOOTER */
+footer {
+  background: var(--darker); color: rgba(255,255,255,0.6); padding: 2.5rem 2rem;
+  text-align: center; font-size: 0.8rem; letter-spacing: 1px;
+}
+footer a { color: var(--gold); text-decoration: none; }
+
+@media (max-width: 600px) {
+  nav { padding: 0.8rem 1rem; }
+  header.page-header { padding: 3.5rem 1.25rem 3rem; }
+  main { padding: 2.5rem 1rem 4rem; }
+  .form-section { padding: 1.5rem 1.25rem 1rem; }
+  .field.inline-row { grid-template-columns: 1fr; gap: 0; }
+  .field.inline-row .sub-field { margin-bottom: 1.25rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html"><img src="assets/logo-nav-tight.png" alt="LionHeart Artists — Home"></a>
+  <a class="back-link" href="index.html">← Back to Site</a>
+</nav>
+
+<header class="page-header">
+  <p class="eyebrow">Currently Accepting Applications</p>
+  <h1>Apply for Representation</h1>
+  <div class="divider"></div>
+  <p class="lead">We'd love to learn about your child and your family's vision. This form takes about ten minutes to complete — the more context you share, the better we can evaluate whether LionHeart is the right fit.</p>
+  <div class="phone-callout">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.83-.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    <div>
+      <div class="phone-callout-label">Prefer to talk first?</div>
+      <div class="phone-callout-number"><a href="tel:4247779493">424-777-9493</a></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<p class="form-intro">
+  Fields marked <span style="color:var(--gold)">*</span> are required. Everything else is optional but genuinely helpful — the more we know, the more thoughtfully we can review.
+  <span class="required-note">All information is kept confidential. See our <a href="privacy.html">privacy policy</a> for details.</span>
+</p>
+
+<form id="apply-form" novalidate>
+
+<!-- SECTION 1: PARENT/GUARDIAN -->
+<section class="form-section">
+  <h2>About You</h2>
+  <p class="section-hint">We'll use this to reach you about the application.</p>
+
+  <div class="field">
+    <label for="parent-name">Parent / Guardian Full Name<span class="required-mark">*</span></label>
+    <input type="text" id="parent-name" name="parentName" required autocomplete="name">
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="parent-email">Email<span class="required-mark">*</span></label>
+      <input type="email" id="parent-email" name="parentEmail" required autocomplete="email">
+    </div>
+    <div class="sub-field">
+      <label for="parent-phone">Phone<span class="required-mark">*</span></label>
+      <input type="tel" id="parent-phone" name="parentPhone" required autocomplete="tel">
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="relationship">Relationship to Child<span class="required-mark">*</span></label>
+      <select id="relationship" name="relationship" required>
+        <option value="">Select...</option>
+        <option>Mother</option>
+        <option>Father</option>
+        <option>Legal Guardian</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="sub-field">
+      <label for="location">City &amp; State<span class="required-mark">*</span></label>
+      <input type="text" id="location" name="location" required placeholder="e.g. Pasadena, CA">
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: ABOUT THE CHILD -->
+<section class="form-section">
+  <h2>About Your Child</h2>
+  <p class="section-hint">The performer we'd be representing.</p>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="child-first-name">First Name<span class="required-mark">*</span></label>
+      <input type="text" id="child-first-name" name="childFirstName" required>
+    </div>
+    <div class="sub-field">
+      <label for="child-last-name">Last Name <span class="optional">(optional)</span></label>
+      <input type="text" id="child-last-name" name="childLastName">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="stage-name">Stage Name <span class="optional">(if different)</span></label>
+    <input type="text" id="stage-name" name="stageName">
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="child-dob">Date of Birth<span class="required-mark">*</span></label>
+      <input type="date" id="child-dob" name="childDob" required>
+      <p class="field-hint">Used to confirm age range and work-permit eligibility.</p>
+    </div>
+    <div class="sub-field">
+      <label for="child-gender">Gender Expression for Casting<span class="required-mark">*</span></label>
+      <select id="child-gender" name="childGender" required>
+        <option value="">Select...</option>
+        <option>Female</option>
+        <option>Male</option>
+        <option>Non-binary</option>
+        <option>Prefer to discuss</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="height">Height <span class="optional">(optional)</span></label>
+      <input type="text" id="height" name="height" placeholder="e.g. 4'6&quot;">
+    </div>
+    <div class="sub-field">
+      <label for="hair-color">Hair Color <span class="optional">(optional)</span></label>
+      <input type="text" id="hair-color" name="hairColor">
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="eye-color">Eye Color <span class="optional">(optional)</span></label>
+      <input type="text" id="eye-color" name="eyeColor">
+    </div>
+    <div class="sub-field">
+      <label for="ethnicity">Ethnicity / Casting Category <span class="optional">(optional)</span></label>
+      <input type="text" id="ethnicity" name="ethnicity">
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: EXPERIENCE -->
+<section class="form-section">
+  <h2>Experience &amp; Professional Status</h2>
+  <p class="section-hint">These details help us gauge where your child is in their journey. All optional — but stronger applications tend to share this.</p>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="union-status">Union Status <span class="optional">(optional)</span></label>
+      <select id="union-status" name="unionStatus">
+        <option value="">Select...</option>
+        <option>Non-union</option>
+        <option>SAG-AFTRA Eligible</option>
+        <option>SAG-AFTRA Member (Must Join)</option>
+        <option>SAG-AFTRA Member</option>
+        <option>Other / Unsure</option>
+      </select>
+    </div>
+    <div class="sub-field">
+      <label for="work-permit">CA Work Permit <span class="optional">(optional)</span></label>
+      <select id="work-permit" name="workPermit">
+        <option value="">Select...</option>
+        <option>Current</option>
+        <option>Expired</option>
+        <option>In progress</option>
+        <option>Not yet obtained</option>
+        <option>Not applicable (outside CA)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="coogan">Coogan Account <span class="optional">(optional)</span></label>
+      <select id="coogan" name="coogan">
+        <option value="">Select...</option>
+        <option>Established</option>
+        <option>In progress</option>
+        <option>Not yet</option>
+        <option>Not applicable</option>
+      </select>
+    </div>
+    <div class="sub-field">
+      <label for="self-tape">Self-Tape Setup at Home <span class="optional">(optional)</span></label>
+      <select id="self-tape" name="selfTapeSetup">
+        <option value="">Select...</option>
+        <option>Yes — full setup</option>
+        <option>Partial / basic</option>
+        <option>No</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="prior-rep">Prior Representation <span class="optional">(optional)</span></label>
+    <textarea id="prior-rep" name="priorRepresentation" placeholder="Current or previous agent/manager — who, when, and why the relationship ended. If none, leave blank."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="training">Training &amp; Coaches <span class="optional">(optional)</span></label>
+    <textarea id="training" name="training" placeholder="Acting classes, teachers, studios, workshops, duration..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="credits">Credits <span class="optional">(optional)</span></label>
+    <textarea id="credits" name="credits" placeholder="Notable projects, roles, campaigns..."></textarea>
+  </div>
+
+  <div class="field">
+    <label for="special-skills">Special Skills <span class="optional">(optional)</span></label>
+    <textarea id="special-skills" name="specialSkills" placeholder="Languages, accents, instruments, sports, dance, martial arts..."></textarea>
+  </div>
+</section>
+
+<!-- SECTION 4: MEDIA -->
+<section class="form-section">
+  <h2>Photos &amp; Media</h2>
+  <p class="section-hint">Recent photos (within the last six months for kids — they grow fast). JPG, PNG, or WebP, up to 10&nbsp;MB each.</p>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="headshot">Headshot<span class="required-mark">*</span></label>
+      <input type="file" id="headshot" name="headshot" accept="image/jpeg,image/png,image/webp" required>
+    </div>
+    <div class="sub-field">
+      <label for="full-length">Full-Length Photo<span class="required-mark">*</span></label>
+      <input type="file" id="full-length" name="fullLength" accept="image/jpeg,image/png,image/webp" required>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="demo-reel">Demo Reel / Self-Tape Link <span class="optional">(optional)</span></label>
+    <input type="url" id="demo-reel" name="demoReelUrl" placeholder="Vimeo, YouTube, or Drive link">
+    <p class="field-hint">A link is better than a file upload — make sure it's set to Unlisted or shared with view access.</p>
+  </div>
+
+  <div class="field">
+    <label for="resume-url">Résumé Link <span class="optional">(optional)</span></label>
+    <input type="url" id="resume-url" name="resumeUrl" placeholder="Link to PDF résumé on Drive, Dropbox, or casting profile">
+  </div>
+</section>
+
+<!-- SECTION 5: SOCIAL & LOGISTICS -->
+<section class="form-section">
+  <h2>Social Presence &amp; Availability</h2>
+  <p class="section-hint">Relevant for our digital creator and influencer representation track.</p>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="instagram">Instagram Handle <span class="optional">(optional)</span></label>
+      <input type="text" id="instagram" name="instagram" placeholder="@handle">
+    </div>
+    <div class="sub-field">
+      <label for="tiktok">TikTok Handle <span class="optional">(optional)</span></label>
+      <input type="text" id="tiktok" name="tiktok" placeholder="@handle">
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="youtube">YouTube Channel <span class="optional">(optional)</span></label>
+      <input type="text" id="youtube" name="youtube" placeholder="Channel name or URL">
+    </div>
+    <div class="sub-field">
+      <label for="follower-counts">Follower Counts <span class="optional">(optional)</span></label>
+      <input type="text" id="follower-counts" name="followerCounts" placeholder="e.g. IG 12K, TT 45K">
+    </div>
+  </div>
+
+  <div class="field inline-row">
+    <div class="sub-field">
+      <label for="school-type">School Type <span class="optional">(optional)</span></label>
+      <select id="school-type" name="schoolType">
+        <option value="">Select...</option>
+        <option>Traditional</option>
+        <option>Homeschool</option>
+        <option>Online / Virtual</option>
+        <option>Hybrid</option>
+        <option>Not yet in school</option>
+      </select>
+    </div>
+    <div class="sub-field">
+      <label for="availability">Availability &amp; Travel <span class="optional">(optional)</span></label>
+      <input type="text" id="availability" name="availability" placeholder="e.g. Weekdays after 3pm, willing to travel">
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: FIT -->
+<section class="form-section">
+  <h2>Goals &amp; Fit</h2>
+
+  <div class="field">
+    <label for="goals">Tell Us About Your Child &amp; Goals<span class="required-mark">*</span></label>
+    <textarea id="goals" name="goals" required placeholder="What makes your child special? What are their goals over the next one to two years? What drew you to LionHeart Artists?"></textarea>
+  </div>
+
+  <div class="field">
+    <label for="how-heard">How Did You Hear About Us? <span class="optional">(optional)</span></label>
+    <select id="how-heard" name="howHeard">
+      <option value="">Select...</option>
+      <option>Referral from family or friend</option>
+      <option>Industry referral</option>
+      <option>Social media</option>
+      <option>Google search</option>
+      <option>Other</option>
+    </select>
+  </div>
+</section>
+
+<!-- SECTION 7: CONSENT -->
+<section class="form-section">
+  <h2>Consent</h2>
+
+  <div class="field checkbox-field">
+    <input type="checkbox" id="consent" name="consent" required>
+    <label for="consent">I am the parent or legal guardian of the child named above (or have written authorization from one), and I consent to LionHeart Artists collecting and reviewing the information and media I am submitting, as described in the <a href="privacy.html" target="_blank">Privacy Policy</a>.<span class="required-mark">*</span></label>
+  </div>
+
+  <div class="turnstile-wrapper">
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADB--yvUYC5nOzI3"></div>
+  </div>
+
+  <button type="submit" class="submit-btn" id="submit-btn">Submit Application</button>
+
+  <div class="status-message" id="status-message" role="alert"></div>
+</section>
+
+</form>
+
+<div class="success-panel" id="success-panel">
+  <h2>Thank You</h2>
+  <div class="divider"></div>
+  <p>Your application has been received.</p>
+  <p>We'll send a confirmation to your email and be in touch personally within <strong>7–10 business days</strong>.</p>
+  <p>In the meantime, feel free to reach us at <a href="tel:4247779493">424-777-9493</a> with any questions.</p>
+</div>
+
+</main>
+
+<footer>
+  <p>&copy; 2026 LionHeart Artists. All rights reserved. &middot; <a href="index.html">Home</a> &middot; <a href="privacy.html">Privacy Policy</a></p>
+</footer>
+
+<script>
+// The deployed Apps Script web app URL. Replace after Apps Script deployment (see apps-script/README.md).
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSyWe3GLYTTPJw0XrheF9WcoNI45_j6zOJFitd2gFF8oM9-FFpw6tEy3m_AqyJvh_k/exec';
+const MAX_FILE_BYTES = 10 * 1024 * 1024; // 10 MB
+
+const form = document.getElementById('apply-form');
+const submitBtn = document.getElementById('submit-btn');
+const statusEl = document.getElementById('status-message');
+const successEl = document.getElementById('success-panel');
+
+function showError(msg) {
+  statusEl.className = 'status-message error';
+  statusEl.textContent = msg;
+  statusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function showInfo(msg) {
+  statusEl.className = 'status-message info';
+  statusEl.textContent = msg;
+}
+
+function clearStatus() {
+  statusEl.className = 'status-message';
+  statusEl.textContent = '';
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const base64 = String(result).split(',')[1] || '';
+      resolve({ base64, mime: file.type, size: file.size, filename: file.name });
+    };
+    reader.onerror = () => reject(new Error('Could not read file: ' + file.name));
+    reader.readAsDataURL(file);
+  });
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearStatus();
+
+  if (APPS_SCRIPT_URL.startsWith('REPLACE_')) {
+    showError('The form backend is not yet configured. Please contact us directly at 424-777-9493.');
+    return;
+  }
+
+  // Turnstile token
+  const turnstileToken = (form.querySelector('[name="cf-turnstile-response"]') || {}).value;
+  if (!turnstileToken) {
+    showError('Please complete the verification challenge above.');
+    return;
+  }
+
+  // File validation
+  const headshotFile = document.getElementById('headshot').files[0];
+  const fullLengthFile = document.getElementById('full-length').files[0];
+  if (!headshotFile || !fullLengthFile) {
+    showError('Please attach both a headshot and a full-length photo.');
+    return;
+  }
+  if (headshotFile.size > MAX_FILE_BYTES || fullLengthFile.size > MAX_FILE_BYTES) {
+    showError('Each photo must be 10 MB or smaller.');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  showInfo('Uploading your application — please don\'t close this tab.');
+
+  try {
+    const [headshot, fullLength] = await Promise.all([
+      fileToBase64(headshotFile),
+      fileToBase64(fullLengthFile),
+    ]);
+
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+    delete payload.headshot;
+    delete payload['full-length'];
+    delete payload['cf-turnstile-response'];
+    payload.headshot = headshot;
+    payload.fullLength = fullLength;
+    payload.turnstileToken = turnstileToken;
+    payload.consent = !!document.getElementById('consent').checked;
+
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      // text/plain avoids CORS preflight — Apps Script reads e.postData.contents as JSON regardless
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.ok) {
+      showError(data.error || 'Something went wrong. Please try again or call us directly.');
+      submitBtn.disabled = false;
+      if (window.turnstile) window.turnstile.reset();
+      return;
+    }
+
+    form.style.display = 'none';
+    successEl.classList.add('visible');
+    successEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    showError('Network error — please try again, or call 424-777-9493 to reach us directly.');
+    submitBtn.disabled = false;
+    if (window.turnstile) window.turnstile.reset();
+  }
+});
+</script>
+
+</body>
+</html>

@@ -685,68 +685,17 @@ footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', 
   <p class="section-subtitle">Currently Accepting Applications</p>
   <h2 class="section-title">Let's Connect</h2>
   <div class="divider"></div>
-  <p class="contact-intro">We'd love to learn about your child and your family's vision. Fill out the form below and we'll be in touch to start a conversation.</p>
+  <p class="contact-intro">We'd love to learn about your child and your family's vision. Our full application takes about ten minutes and gives our team the context to evaluate fit thoughtfully.</p>
   <div class="phone-callout">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.83a16 16 0 0 0 6.29 6.29l.83-.83a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     <div class="phone-callout-text">
-      <div class="phone-callout-label">Prefer to talk? Call us directly</div>
+      <div class="phone-callout-label">Prefer to talk first? Call us directly</div>
       <div class="phone-callout-number"><a href="tel:4247779493">424-777-9493</a></div>
     </div>
   </div>
-  <form class="contact-form" id="apply-form">
-    <div class="form-row">
-      <div class="field">
-        <label for="parent-name">Parent/Guardian Name *</label>
-        <input type="text" id="parent-name" required placeholder="Full name">
-      </div>
-      <div class="field">
-        <label for="email">Email *</label>
-        <input type="email" id="email" required placeholder="Email address">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="field">
-        <label for="phone">Phone <span style="opacity:0.5">(optional)</span></label>
-        <input type="tel" id="phone" placeholder="Phone number">
-      </div>
-      <div class="field">
-        <label for="child-name">Child's First Name *</label>
-        <input type="text" id="child-name" required placeholder="First name">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="field">
-        <label for="child-age">Child's Age *</label>
-        <input type="text" id="child-age" required placeholder="Age(s)">
-      </div>
-    </div>
-    <div class="field">
-      <label for="interest">Area of Interest <span style="opacity:0.5">(optional)</span></label>
-      <select id="interest">
-        <option value="">Select an industry</option>
-        <option>Film & Television</option>
-        <option>Commercial & Print</option>
-        <option>Digital Creators & Influencers</option>
-        <option>Performing Arts</option>
-        <option>Multiple / Not Sure</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="about-child">Tell Us About Your Child</label>
-      <textarea id="about-child" placeholder="Their experience, interests, and what makes them special..."></textarea>
-    </div>
-    <div class="form-row">
-      <div class="field">
-        <label for="headshot">Headshot Photo *</label>
-        <input type="file" id="headshot" accept="image/*" required>
-      </div>
-      <div class="field">
-        <label for="full-length">Full-Length Photo *</label>
-        <input type="file" id="full-length" accept="image/*" required>
-      </div>
-    </div>
-    <button type="submit" class="submit-btn">Start the Conversation</button>
-  </form>
+  <div style="text-align:center;margin-top:3rem;">
+    <a href="apply.html" class="hero-cta" style="display:inline-block;background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:500;">Begin Your Application →</a>
+  </div>
 </section>
 
 </main>
@@ -761,6 +710,7 @@ footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', 
   <p><a href="tel:4247779493" style="color:var(--gold);text-decoration:none;letter-spacing:2px;">424-777-9493</a></p>
   <p>&copy; 2026 LionHeart Artists. All rights reserved.</p>
   <p>Los Angeles, California</p>
+  <p style="margin-top:0.75rem;"><a href="privacy.html" style="color:var(--gold);text-decoration:none;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;">Privacy Policy</a></p>
 </footer>
 
 <script>
@@ -805,16 +755,6 @@ window.addEventListener('scroll', () => {
   });
 });
 
-// Form submission
-document.getElementById('apply-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  this.style.transition = 'opacity 0.3s';
-  this.style.opacity = '0';
-  setTimeout(() => {
-    this.innerHTML = '<div class="form-success">Thank you for reaching out.<br>We look forward to learning about your child.</div>';
-    this.style.opacity = '1';
-  }, 300);
-});
 </script>
 
 </body>

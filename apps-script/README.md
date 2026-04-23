@@ -1,0 +1,102 @@
+# Apps Script Backend — Talent Intake
+
+This directory contains the source for the Google Apps Script web app that receives submissions from `apply.html`. Apps Script itself runs in Google's cloud, not from this repo — these files are the **source of truth** for the deployed script and should be kept in sync.
+
+## One-time setup (do this signed in as `james@lionheartartists.com`)
+
+### 1. Shared Drive folder structure
+
+Already created inside the "LionHeart Artists — Talent Intake" Shared Drive (ID `0ABJJvi8pLaB8Uk9PVA`):
+
+| Resource | Value |
+|---|---|
+| Shared Drive ID | `0ABJJvi8pLaB8Uk9PVA` |
+| Applicants folder ID | `10j6gvxoOPlsaiaaQigEob9zBehkHKH68` |
+| Pipeline spreadsheet ID | `1eVTKM8kvaCAj6LOeRhRRapjUk-HB1L_X-gWYbTH-IGM` |
+
+The Pipeline sheet already has the header row pre-populated (matching `../SHEET_SCHEMA.md`). The first tab is named `Sheet1` by default; you may rename it to `Pipeline` for consistency with the schema doc, but the script works either way.
+
+If you ever need to re-create these from scratch, the structure is: `Applicants/` folder at the Shared Drive root, and a Google Sheet named `Pipeline` at the root with the header row from `SHEET_SCHEMA.md`.
+
+### 2. Create the Apps Script project
+
+1. Open `script.google.com` → **New project**. Name it `LionHeart Artists — Talent Intake`.
+2. Replace the default `Code.gs` contents with the contents of `Code.gs` in this directory.
+3. Click the gear icon → **Show "appsscript.json" manifest file in editor**, then replace it with the `appsscript.json` in this directory.
+
+### 3. Set Script Properties
+
+**Project Settings → Script Properties → Add script property**, for each of:
+
+| Key | Value |
+|---|---|
+| `TURNSTILE_SECRET` | (the Cloudflare Turnstile secret key — from the Cloudflare Turnstile dashboard, not the site key) |
+| `SHARED_DRIVE_ID` | `0ABJJvi8pLaB8Uk9PVA` |
+| `APPLICANTS_FOLDER_ID` | `10j6gvxoOPlsaiaaQigEob9zBehkHKH68` |
+| `PIPELINE_SHEET_ID` | `1eVTKM8kvaCAj6LOeRhRRapjUk-HB1L_X-gWYbTH-IGM` |
+| `NOTIFY_EMAIL` | `lisa@lionheartartists.com` |
+
+### 4. Deploy as a web app
+
+1. Click **Deploy → New deployment**.
+2. Type: **Web app**.
+3. Description: `v1 intake endpoint`.
+4. Execute as: **Me (james@lionheartartists.com)**.
+5. Who has access: **Anyone** (no Google sign-in required for applicants).
+6. Click **Deploy**. Google will prompt you to authorize the four scopes in `appsscript.json` — approve them.
+7. **Copy the web app URL.** It looks like `https://script.google.com/macros/s/AKfy.../exec`.
+
+### 5. Wire the URL into the form
+
+In `apply.html`, find the line:
+
+```js
+const APPS_SCRIPT_URL = 'REPLACE_WITH_DEPLOYED_APPS_SCRIPT_URL';
+```
+
+Replace the placeholder with the URL from step 4. Commit, push, and merge to `main` to deploy.
+
+## Updating the script after changes
+
+1. Edit files in this repo, commit to a feature branch, PR into `main`.
+2. In the Apps Script editor, paste the updated `Code.gs` content over the existing file.
+3. **Deploy → Manage deployments → pencil icon on the active deployment → Version: New version → Deploy.** Keeps the same URL, so the form keeps working without any site change.
+
+## How the backend handles a submission
+
+1. `doPost` parses the JSON body (sent as `text/plain` to avoid a CORS preflight).
+2. `verifyTurnstile` calls Cloudflare's `siteverify` with the token + secret. If the score is bad, the submission is rejected.
+3. `validateSubmission` enforces required fields, email format, MIME type (JPEG/PNG/WebP only), and 10 MB file size.
+4. A folder is created under `Applicants/<year>/<LastName> — <First> (timestamp)/`.
+5. Both photos are base64-decoded and written into that folder. **Google Drive's native malware scan runs automatically** on files under 100 MB.
+6. One row is appended to the Pipeline sheet with all form fields + links to the folder and files.
+7. A formatted notification goes to `NOTIFY_EMAIL`.
+8. A warm confirmation goes to the submitting parent's email.
+
+## Security notes
+
+- The `TURNSTILE_SECRET` never leaves Apps Script. It is never committed to the repo or logged.
+- Turnstile verification happens server-side; a client with a valid site key but no real token cannot bypass it.
+- The web app is public (no Google sign-in required) — rate limiting is handled by Turnstile, not by Apps Script.
+- Apps Script can't return custom HTTP status codes; all responses are HTTP 200 with an `ok` field in the JSON body. The browser code handles both cases.
+- Decoded file bytes live only in-memory inside the Apps Script execution; they're streamed directly to Drive.
+
+## Quotas (for reference)
+
+- `MailApp.sendEmail`: 100/day on a consumer Gmail, **1500/day on Workspace** — far above expected intake volume.
+- `UrlFetchApp` (for Turnstile verify): 20,000/day.
+- Drive uploads: effectively unlimited for this volume.
+
+## Testing
+
+After deploy, test with a `GET` request (should return `{"ok":true,"service":"LionHeart Artists Intake"}`):
+
+```
+curl "https://script.google.com/macros/s/.../exec"
+```
+
+Then test a full submission through `apply.html`. Check:
+- A new folder appears under `Applicants/<year>/`
+- A row appears in the Pipeline sheet with `Status = New`
+- Lisa receives the notification email
+- The submitting email address receives the confirmation
