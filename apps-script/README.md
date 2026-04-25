@@ -64,14 +64,62 @@ Replace the placeholder with the URL from step 4. Commit, push, and merge to `ma
 
 ## How the backend handles a submission
 
+The script splits into three phases. Failures in **Phase 1** or **Phase 2** return an error to the user; failures in **Phase 3** are logged but the submission still succeeds.
+
+**Phase 1 — Parse + verify (no persistence yet)**
 1. `doPost` parses the JSON body (sent as `text/plain` to avoid a CORS preflight).
-2. `verifyTurnstile` calls Cloudflare's `siteverify` with the token + secret. If the score is bad, the submission is rejected.
+2. `verifyTurnstile` calls Cloudflare's `siteverify`. If rejected, the user sees "Verification challenge failed."
 3. `validateSubmission` enforces required fields, email format, MIME type (JPEG/PNG/WebP only), and 10 MB file size.
+
+**Phase 2 — Persist (critical)**
+
 4. A folder is created under `Applicants/<year>/<LastName> — <First> (timestamp)/`.
 5. Both photos are base64-decoded and written into that folder. **Google Drive's native malware scan runs automatically** on files under 100 MB.
 6. One row is appended to the Pipeline sheet with all form fields + links to the folder and files.
+
+If any of steps 4–6 fail, the user sees "We couldn't save your submission." and the failure is logged at ERROR severity for monitoring.
+
+**Phase 3 — Notify (non-critical)**
+
 7. A formatted notification goes to `NOTIFY_EMAIL`.
 8. A warm confirmation goes to the submitting parent's email.
+
+Each email is wrapped in its own try/catch via `trySendEmail_`. If either fails, the failure is logged but the submission is still reported as successful to the user — their data is already safely persisted in Phase 2. You'll see the failure in the logs and can manually follow up.
+
+## Monitoring (lightweight today; deeper alerting is a follow-up)
+
+Every meaningful event emits a structured JSON line via `console.log` / `console.error` (`*_failed` and `*_error` events use `console.error`, surfacing as ERROR severity in Cloud Logging).
+
+**To view in real time:**
+1. Open the Apps Script editor at `script.google.com` and select the project
+2. Click the **Executions** icon in the left sidebar — it sits below **Triggers** (the clock icon) and shows a list view (icon looks like horizontal lines / a play arrow). The Executions panel lists every recent script run.
+3. **Click anywhere on a row** to expand it inline. The structured log lines (and any stack traces) appear beneath the row.
+4. Status `Completed` does **not** mean "succeeded for the user" — `doPost` always finishes cleanly because errors are caught and returned as JSON. Look at the actual log lines: an `event:"persist_failed"` or `event:"*_failed"` line indicates a real problem.
+
+Example log lines:
+
+```json
+{"event":"persisted","ts":"2026-04-25T16:51:55.123Z","folderId":"...","childFirstName":"...","parentEmail":"..."}
+{"event":"notification_email_failed","ts":"...","error":"Invalid email","stack":"..."}
+{"event":"persist_failed","ts":"...","error":"...","stack":"..."}
+```
+
+**Event reference:**
+
+| Severity | Event | Meaning |
+|---|---|---|
+| INFO | `persisted` | Folder, files, and sheet row all wrote successfully |
+| INFO | `notification_email_sent` | Notification to `NOTIFY_EMAIL` succeeded |
+| INFO | `confirmation_email_sent` | Confirmation to the submitting parent succeeded |
+| INFO | `turnstile_rejected` | A submission failed Turnstile (normal user error) |
+| INFO | `validation_rejected` | A submission failed field validation (normal user error) |
+| ERROR | `parse_failed` | Request body wasn't valid JSON |
+| ERROR | `turnstile_error` | Cloudflare's siteverify call threw |
+| ERROR | `persist_failed` | Drive folder/file/sheet write blew up — **user-facing failure** |
+| ERROR | `notification_email_failed` | Lisa didn't get the notification — submission still saved |
+| ERROR | `confirmation_email_failed` | Parent didn't get the receipt — submission still saved |
+
+When the basic flow is stable, set up a Google Cloud Logging filter on `severity=ERROR` and route alerts to email/Slack. Tracked in the project follow-ups list.
 
 ## Security notes
 

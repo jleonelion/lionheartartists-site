@@ -3,14 +3,19 @@
  * Runs as a Google Apps Script web app deployed from james@lionheartartists.com.
  * See apps-script/README.md for deployment and configuration.
  *
- * Responsibilities:
- *   1. Verify Cloudflare Turnstile token
- *   2. Validate submission payload
- *   3. Create per-applicant folder in the Shared Drive
- *   4. Save uploaded images (Drive's built-in malware scan runs automatically)
- *   5. Append row to Pipeline sheet
- *   6. Email notification to Lisa
- *   7. Email confirmation receipt to parent
+ * Three-phase submission flow:
+ *   PHASE 1 — Parse + verify (Turnstile, validation). Failures return a user-facing
+ *             error message; nothing has been persisted yet.
+ *   PHASE 2 — Persist (CRITICAL): create Drive folder, save uploaded files, append
+ *             Pipeline sheet row. Any failure here returns an error to the user.
+ *   PHASE 3 — Notify (NON-CRITICAL): notification email to Lisa, confirmation email
+ *             to the parent. Each is wrapped individually; failures are logged but
+ *             the submission still succeeds.
+ *
+ * Monitoring: every meaningful event emits a structured JSON log line via
+ * console.log / console.error (`*_failed` and `*_error` events use console.error).
+ * Tail them in the Apps Script "Executions" tab (click an execution row to expand
+ * its logs) or set up a filter in Google Cloud Logging on `severity=ERROR`.
  */
 
 // === Configuration — read from Script Properties (Project Settings → Script Properties) ===
@@ -29,31 +34,59 @@ const REQUIRED_FIELDS = [
 ];
 
 function doPost(e) {
-  try {
-    const body = JSON.parse(e.postData.contents);
+  let body;
 
+  // PHASE 1 — parse + verify (no persistence side effects yet)
+  try {
+    body = JSON.parse(e.postData.contents);
+  } catch (err) {
+    logEvent_('parse_failed', { error: String((err && err.message) || err) });
+    return json({ ok: false, error: 'Invalid request format. Please reload the page and try again.' });
+  }
+
+  try {
     if (!verifyTurnstile(body.turnstileToken)) {
+      logEvent_('turnstile_rejected', {});
       return json({ ok: false, error: 'Verification challenge failed. Please reload the page and try again.' });
     }
-
-    const validation = validateSubmission(body);
-    if (!validation.valid) {
-      return json({ ok: false, error: validation.message });
-    }
-
-    const applicantFolder = createApplicantFolder(body);
-    const headshotFile = saveFile(body.headshot, applicantFolder, 'headshot');
-    const fullLengthFile = saveFile(body.fullLength, applicantFolder, 'full-length');
-
-    appendSheetRow(body, applicantFolder, headshotFile, fullLengthFile);
-    sendNotification(body, applicantFolder);
-    sendParentConfirmation(body);
-
-    return json({ ok: true });
   } catch (err) {
-    console.error('doPost failure', err && err.stack ? err.stack : err);
-    return json({ ok: false, error: 'We couldn\'t process your submission. Please try again, or call 424-777-9493.' });
+    logEvent_('turnstile_error', { error: String((err && err.message) || err), stack: err && err.stack });
+    return json({ ok: false, error: 'Verification temporarily unavailable. Please try again in a moment.' });
   }
+
+  const validation = validateSubmission(body);
+  if (!validation.valid) {
+    logEvent_('validation_rejected', { reason: validation.message });
+    return json({ ok: false, error: validation.message });
+  }
+
+  // PHASE 2 — persist (CRITICAL: failures here return an error to the user)
+  let applicantFolder, headshotFile, fullLengthFile;
+  try {
+    applicantFolder = createApplicantFolder(body);
+    headshotFile = saveFile(body.headshot, applicantFolder, 'headshot');
+    fullLengthFile = saveFile(body.fullLength, applicantFolder, 'full-length');
+    appendSheetRow(body, applicantFolder, headshotFile, fullLengthFile);
+    logEvent_('persisted', {
+      folderId: applicantFolder.getId(),
+      childFirstName: body.childFirstName,
+      parentEmail: body.parentEmail,
+    });
+  } catch (err) {
+    logEvent_('persist_failed', {
+      error: String((err && err.message) || err),
+      stack: err && err.stack,
+      childFirstName: body && body.childFirstName,
+      parentEmail: body && body.parentEmail,
+    });
+    return json({ ok: false, error: 'We couldn\'t save your submission. Please try again, or call 424-777-9493.' });
+  }
+
+  // PHASE 3 — notify (NON-CRITICAL: failures are logged but the submission still succeeds)
+  trySendEmail_('notification_email', () => sendNotification(body, applicantFolder));
+  trySendEmail_('confirmation_email', () => sendParentConfirmation(body));
+
+  return json({ ok: true });
 }
 
 function doGet() {
@@ -230,4 +263,28 @@ function prop_(key) {
 function json(obj) {
   // Apps Script web apps always return HTTP 200 — clients must check the `ok` field.
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function trySendEmail_(label, fn) {
+  try {
+    fn();
+    logEvent_(label + '_sent', {});
+  } catch (err) {
+    logEvent_(label + '_failed', {
+      error: String((err && err.message) || err),
+      stack: err && err.stack,
+    });
+  }
+}
+
+function logEvent_(event, data) {
+  // Structured JSON log line — searchable in Apps Script Executions and in Cloud Logging.
+  // *_failed and *_error events are logged at ERROR severity so they surface in Cloud Logging error filters.
+  const entry = Object.assign({ event: event, ts: new Date().toISOString() }, data || {});
+  const line = JSON.stringify(entry);
+  if (event.endsWith('_failed') || event.endsWith('_error')) {
+    console.error(line);
+  } else {
+    console.log(line);
+  }
 }
