@@ -334,6 +334,55 @@ function handleSpreadsheetEdit(e) {
   }
 }
 
+/**
+ * One-time setup: installs the onEdit trigger that ties this standalone Apps Script
+ * project to the Pipeline spreadsheet. Run this once from the Apps Script editor:
+ *   1. Select `installEditTrigger` in the function dropdown at the top of the editor.
+ *   2. Click Run.
+ *   3. Approve the additional ScriptApp authorization scope when prompted.
+ *
+ * Required because standalone scripts can't pick "From spreadsheet" in the Triggers UI
+ * (only container-bound scripts get that option). Doing it via ScriptApp.newTrigger
+ * works regardless of binding.
+ *
+ * Safe to re-run: removes any existing handleSpreadsheetEdit triggers first so it
+ * doesn't accumulate duplicates.
+ */
+function installEditTrigger() {
+  const ssId = prop_('PIPELINE_SHEET_ID');
+
+  let removed = 0;
+  for (const t of ScriptApp.getProjectTriggers()) {
+    if (t.getHandlerFunction() === 'handleSpreadsheetEdit') {
+      ScriptApp.deleteTrigger(t);
+      removed++;
+    }
+  }
+
+  ScriptApp.newTrigger('handleSpreadsheetEdit')
+    .forSpreadsheet(ssId)
+    .onEdit()
+    .create();
+
+  logEvent_('edit_trigger_installed', { spreadsheetId: ssId, removedExisting: removed });
+}
+
+/**
+ * Diagnostic: list every trigger on this project. Run from the editor to confirm
+ * installEditTrigger worked, or to audit what's currently active.
+ */
+function listTriggers() {
+  const triggers = ScriptApp.getProjectTriggers().map(t => ({
+    handler: t.getHandlerFunction(),
+    eventType: String(t.getEventType()),
+    triggerSource: String(t.getTriggerSource()),
+    triggerSourceId: t.getTriggerSourceId(),
+    uniqueId: t.getUniqueId(),
+  }));
+  console.log(JSON.stringify({ event: 'triggers_listed', count: triggers.length, triggers: triggers }));
+  return triggers;
+}
+
 function sendParentConfirmation(body) {
   const subject = 'We received your inquiry — LionHeart Artists';
   const htmlBody = [

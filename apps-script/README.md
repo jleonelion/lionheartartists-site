@@ -46,20 +46,19 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 6. Click **Deploy**. Google will prompt you to authorize the four scopes in `appsscript.json` — approve them.
 7. **Copy the web app URL.** It looks like `https://script.google.com/macros/s/AKfy.../exec`.
 
-### 5. Add the installable onEdit trigger (powers Lisa's "any new entry" email)
+### 5. Install the onEdit trigger (one-time, runs from the editor)
 
-`doPost` notifies Lisa for form submissions inline, but Lisa also wants an email when she or someone else manually adds a row in the Sheets UI. That path goes through the spreadsheet's **onEdit** trigger.
+`doPost` notifies Lisa for form submissions inline, but Lisa also wants an email when she or someone else manually adds a row in the Sheets UI. That path goes through an installable **onEdit** trigger on the Pipeline spreadsheet.
 
-1. Apps Script editor → left sidebar → **Triggers** (clock icon) → **Add Trigger** (bottom right).
-2. Function to run: **`handleSpreadsheetEdit`**.
-3. Deployment: **Head**.
-4. Event source: **From spreadsheet**.
-5. Select spreadsheet: pick the **Pipeline** sheet (`1eVTKM8kvaCAj6LOeRhRRapjUk-HB1L_X-gWYbTH-IGM`).
-6. Event type: **On edit**.
-7. Failure notification settings: leave default (notify immediately on failure).
-8. **Save**. Apps Script will prompt you to grant Sheets and Mail permissions — approve.
+**Why this is set up via code, not the Triggers UI:** this Apps Script project is *standalone* (created at `script.google.com`), not container-bound to a specific spreadsheet. The Triggers UI only offers "Time-driven" and "From calendar" as event sources for standalone scripts — "From spreadsheet" requires container-binding. The fix is to call `ScriptApp.newTrigger('...').forSpreadsheet(id).onEdit().create()` programmatically, which works regardless of binding. The helper `installEditTrigger` in `Code.gs` does exactly this.
 
-The trigger is idempotent: it skips rows whose `Notified At` cell (column 41 / AO) is already populated, and skips rows that don't yet have a parent email + child first name (i.e., mid-typing state).
+1. Apps Script editor → at the top, find the **function dropdown** (between the Debug button and Run button) → select **`installEditTrigger`**.
+2. Click **Run**.
+3. Apps Script will prompt to authorize the additional `script.scriptapp` scope — approve.
+4. The function runs, prints `{"event":"edit_trigger_installed",...}` to the log, and exits.
+5. **Verify:** select **`listTriggers`** in the function dropdown → Run. Check the log output: you should see one trigger entry for `handleSpreadsheetEdit` with eventType `ON_EDIT`. Or open the **Triggers** tab (clock icon) — the new trigger now appears there.
+
+The trigger is idempotent: it skips rows whose `Notified At` cell (column 41 / AO) is already populated, and skips rows that don't yet have a parent email + child first name (i.e., mid-typing state). Re-running `installEditTrigger` is safe — it removes any prior `handleSpreadsheetEdit` triggers first, so duplicates don't pile up.
 
 ### 6. Add the Notified At column to the Pipeline sheet
 
