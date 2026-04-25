@@ -12,11 +12,17 @@ The Pipeline spreadsheet lives in the Shared Drive (ID `0ABJJvi8pLaB8Uk9PVA`) an
 
 ## Header row
 
-Paste the following as a single row (tab-separated when you paste into Sheets, it fills columns correctly):
+Paste the following as a single row (tab-separated when you paste into Sheets, it fills columns correctly). The final column, **Notified At** (column 41 / AO), is required for the Lisa-notification idempotency check — see "Notification dedup" below.
 
 ```
-Submitted At	Status	Parent Name	Parent Email	Parent Phone	Relationship	Location	Child First Name	Child Last Name	Stage Name	Date of Birth	Age	Gender (casting)	Height	Hair	Eyes	Ethnicity / Category	Prior Representation	Union Status	CA Work Permit	Coogan	Training	Credits	Special Skills	Demo Reel	Résumé Link	Self-Tape Setup	Instagram	TikTok	YouTube	Followers	School Type	Availability	Goals / Fit	How Heard	Folder	Headshot	Full-Length	Notes	Decline Reason
+Submitted At	Status	Parent Name	Parent Email	Parent Phone	Relationship	Location	Child First Name	Child Last Name	Stage Name	Date of Birth	Age	Gender (casting)	Height	Hair	Eyes	Ethnicity / Category	Prior Representation	Union Status	CA Work Permit	Coogan	Training	Credits	Special Skills	Demo Reel	Résumé Link	Self-Tape Setup	Instagram	TikTok	YouTube	Followers	School Type	Availability	Goals / Fit	How Heard	Folder	Headshot	Full-Length	Notes	Decline Reason	Notified At
 ```
+
+### Notification dedup
+
+The Apps Script `notifyLisaOfRow` function writes a timestamp to **column 41 (AO)** when it successfully sends the Lisa-notification email for that row. On every subsequent edit of that row, the onEdit trigger sees the timestamp and skips re-sending. This makes the trigger safe to fire repeatedly (which it does — every keystroke fires onEdit).
+
+If you ever need to **force a re-send** for a specific row (e.g., the original notification got eaten by spam), clear the cell in column AO for that row. The next edit on the row will trigger a fresh notification.
 
 ## Status values
 

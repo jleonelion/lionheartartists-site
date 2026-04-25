@@ -46,7 +46,26 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 6. Click **Deploy**. Google will prompt you to authorize the four scopes in `appsscript.json` — approve them.
 7. **Copy the web app URL.** It looks like `https://script.google.com/macros/s/AKfy.../exec`.
 
-### 5. Wire the URL into the form
+### 5. Add the installable onEdit trigger (powers Lisa's "any new entry" email)
+
+`doPost` notifies Lisa for form submissions inline, but Lisa also wants an email when she or someone else manually adds a row in the Sheets UI. That path goes through the spreadsheet's **onEdit** trigger.
+
+1. Apps Script editor → left sidebar → **Triggers** (clock icon) → **Add Trigger** (bottom right).
+2. Function to run: **`handleSpreadsheetEdit`**.
+3. Deployment: **Head**.
+4. Event source: **From spreadsheet**.
+5. Select spreadsheet: pick the **Pipeline** sheet (`1eVTKM8kvaCAj6LOeRhRRapjUk-HB1L_X-gWYbTH-IGM`).
+6. Event type: **On edit**.
+7. Failure notification settings: leave default (notify immediately on failure).
+8. **Save**. Apps Script will prompt you to grant Sheets and Mail permissions — approve.
+
+The trigger is idempotent: it skips rows whose `Notified At` cell (column 41 / AO) is already populated, and skips rows that don't yet have a parent email + child first name (i.e., mid-typing state).
+
+### 6. Add the Notified At column to the Pipeline sheet
+
+Open the Pipeline sheet, type **`Notified At`** in cell **AO1** (column 41, immediately after `Decline Reason`). The script writes a timestamp here when it successfully emails Lisa. To force a re-send for a row, clear that cell.
+
+### 7. Wire the deployed web-app URL into the form
 
 In `apply.html`, find the line:
 
@@ -81,10 +100,14 @@ If any of steps 4–6 fail, the user sees "We couldn't save your submission." an
 
 **Phase 3 — Notify (non-critical)**
 
-7. A formatted notification goes to `NOTIFY_EMAIL`.
-8. A warm confirmation goes to the submitting parent's email.
+7. A warm confirmation email goes to the submitting parent.
+8. `notifyLisaOfRow(lastRow)` is invoked, which sends Lisa's notification email and timestamps the row's `Notified At` cell (column AO).
 
-Each email is wrapped in its own try/catch via `trySendEmail_`. If either fails, the failure is logged but the submission is still reported as successful to the user — their data is already safely persisted in Phase 2. You'll see the failure in the logs and can manually follow up.
+Each path is wrapped in try/catch. If either fails, the failure is logged but the submission is still reported as successful to the user — their data is already safely persisted in Phase 2. You'll see the failure in the logs and can manually follow up.
+
+**Manual entries (separate path)**
+
+When Lisa or James types a new row directly in the Sheets UI, the Apps Script `handleSpreadsheetEdit` installable trigger fires on every cell edit and calls `notifyLisaOfRow(editedRow)`. The function reads the row's data, skips if either Parent Email or Child First Name is blank (mid-typing), and emails Lisa once the row is complete. The `Notified At` column ensures one email per row even though onEdit fires on every keystroke.
 
 ## Monitoring (lightweight today; deeper alerting is a follow-up)
 
@@ -109,15 +132,18 @@ Example log lines:
 | Severity | Event | Meaning |
 |---|---|---|
 | INFO | `persisted` | Folder, files, and sheet row all wrote successfully |
-| INFO | `notification_email_sent` | Notification to `NOTIFY_EMAIL` succeeded |
+| INFO | `notification_email_sent` | Notification to `NOTIFY_EMAIL` succeeded; `Notified At` cell now populated |
 | INFO | `confirmation_email_sent` | Confirmation to the submitting parent succeeded |
+| INFO | `notification_skipped_incomplete` | A row was checked but Parent Email or Child First Name was missing — normal mid-typing state |
 | INFO | `turnstile_rejected` | A submission failed Turnstile (normal user error) |
 | INFO | `validation_rejected` | A submission failed field validation (normal user error) |
 | ERROR | `parse_failed` | Request body wasn't valid JSON |
 | ERROR | `turnstile_error` | Cloudflare's siteverify call threw |
 | ERROR | `persist_failed` | Drive folder/file/sheet write blew up — **user-facing failure** |
-| ERROR | `notification_email_failed` | Lisa didn't get the notification — submission still saved |
+| ERROR | `notification_email_failed` | Lisa didn't get the notification — `Notified At` left blank so next edit retries |
 | ERROR | `confirmation_email_failed` | Parent didn't get the receipt — submission still saved |
+| ERROR | `inline_notification_failed` | Lisa-notification path inside doPost threw before reaching `notifyLisaOfRow` (e.g., couldn't open the spreadsheet); the onEdit trigger will still cover the row when it fires |
+| ERROR | `handleSpreadsheetEdit_failed` | The onEdit trigger handler itself threw — investigate Apps Script Executions for the row context |
 
 When the basic flow is stable, set up a Google Cloud Logging filter on `severity=ERROR` and route alerts to email/Slack. Tracked in the project follow-ups list.
 

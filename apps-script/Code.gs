@@ -8,9 +8,19 @@
  *             error message; nothing has been persisted yet.
  *   PHASE 2 — Persist (CRITICAL): create Drive folder, save uploaded files, append
  *             Pipeline sheet row. Any failure here returns an error to the user.
- *   PHASE 3 — Notify (NON-CRITICAL): notification email to Lisa, confirmation email
- *             to the parent. Each is wrapped individually; failures are logged but
- *             the submission still succeeds.
+ *   PHASE 3 — Notify: parent receives a confirmation email (via doPost) AND Lisa
+ *             receives a notification (via notifyLisaOfRow). Both wrap their own
+ *             try/catch so a failure is logged without failing the submission.
+ *
+ * Lisa-notification design:
+ *   notifyLisaOfRow(rowNumber) is idempotent — it checks the "Notified At" column
+ *   (column 41 / AO) and skips rows already notified. Two entry points feed it:
+ *     1. doPost calls it directly after appendSheetRow — covers form submissions.
+ *     2. The installable onEdit trigger (handleSpreadsheetEdit) calls it whenever
+ *        any cell is edited on the Pipeline sheet — covers rows added manually by
+ *        Lisa or James in the Sheets UI.
+ *   The Notified At cell is written only on successful send, so a transient email
+ *   failure leaves it blank and the next edit retries.
  *
  * Monitoring: every meaningful event emits a structured JSON log line via
  * console.log / console.error (`*_failed` and `*_error` events use console.error).
@@ -82,9 +92,20 @@ function doPost(e) {
     return json({ ok: false, error: 'We couldn\'t save your submission. Please try again, or call 424-777-9493.' });
   }
 
-  // PHASE 3 — notify (NON-CRITICAL: failures are logged but the submission still succeeds)
-  trySendEmail_('notification_email', () => sendNotification(body, applicantFolder));
+  // PHASE 3 — notify (NON-CRITICAL: failures are logged but the submission still succeeds).
+  // Lisa is notified via notifyLisaOfRow, which is also invoked by the spreadsheet
+  // onEdit trigger for manually added rows. The Notified-At marker keeps it idempotent.
   trySendEmail_('confirmation_email', () => sendParentConfirmation(body));
+  try {
+    const ss = SpreadsheetApp.openById(prop_('PIPELINE_SHEET_ID'));
+    const sheet = ss.getSheetByName('Pipeline') || ss.getSheets()[0];
+    notifyLisaOfRow(sheet.getLastRow());
+  } catch (err) {
+    logEvent_('inline_notification_failed', {
+      error: String((err && err.message) || err),
+      stack: err && err.stack,
+    });
+  }
 
   return json({ ok: true });
 }
@@ -210,26 +231,107 @@ function computeAge_(dobStr) {
   return age;
 }
 
-function sendNotification(body, folder) {
-  const age = computeAge_(body.childDob);
-  const subject = `New intake: ${body.childFirstName} (age ${age}) — ${body.parentName}`;
+/**
+ * Idempotent Lisa-notification for a single row of the Pipeline sheet.
+ * Skips if already notified (column 41 / AO has a value), or if the row is
+ * incomplete (no parent email or no child first name yet — typical mid-typing state).
+ * Marks the row notified ONLY on successful send, so transient failures retry.
+ */
+const NOTIFIED_AT_COL = 41;
+
+function notifyLisaOfRow(rowNumber) {
+  if (!rowNumber || rowNumber <= 1) return;
+
+  const ss = SpreadsheetApp.openById(prop_('PIPELINE_SHEET_ID'));
+  const sheet = ss.getSheetByName('Pipeline') || ss.getSheets()[0];
+
+  if (sheet.getRange(rowNumber, NOTIFIED_AT_COL).getValue()) {
+    return; // already notified
+  }
+
+  const lastCol = Math.max(sheet.getLastColumn(), NOTIFIED_AT_COL);
+  const values = sheet.getRange(rowNumber, 1, 1, lastCol).getValues()[0];
+
+  // Column positions match appendSheetRow's order. Keep these in sync if you reorder.
+  const submittedAt = values[0];
+  const parentName = values[2] || '';
+  const parentEmail = values[3] || '';
+  const parentPhone = values[4] || '';
+  const location = values[6] || '';
+  const childFirstName = values[7] || '';
+  const childLastName = values[8] || '';
+  const stageName = values[9] || '';
+  const age = values[11] || '';
+  const priorRep = values[17] || '';
+  const unionStatus = values[18] || '';
+  const goals = values[33] || '';
+  const folderUrl = values[35] || '';
+
+  if (!parentEmail || !childFirstName) {
+    logEvent_('notification_skipped_incomplete', {
+      rowNumber: rowNumber,
+      hasParentEmail: !!parentEmail,
+      hasChildName: !!childFirstName,
+    });
+    return;
+  }
+
+  const subject = `New intake: ${childFirstName}${age ? ' (age ' + age + ')' : ''}${parentName ? ' — ' + parentName : ''}`;
   const htmlBody = [
-    '<p>A new representation inquiry has arrived.</p>',
-    `<p><strong>Child:</strong> ${esc_(body.childFirstName)}${body.childLastName ? ' ' + esc_(body.childLastName) : ''}${body.stageName ? ' (stage: ' + esc_(body.stageName) + ')' : ''}, age ${age}</p>`,
-    `<p><strong>Parent:</strong> ${esc_(body.parentName)} &lt;<a href="mailto:${esc_(body.parentEmail)}">${esc_(body.parentEmail)}</a>&gt; &middot; ${esc_(body.parentPhone)}</p>`,
-    `<p><strong>Location:</strong> ${esc_(body.location)}</p>`,
-    body.unionStatus ? `<p><strong>Union:</strong> ${esc_(body.unionStatus)}</p>` : '',
-    body.priorRepresentation ? `<p><strong>Prior rep:</strong> ${esc_(body.priorRepresentation)}</p>` : '',
-    `<p><strong>Goals:</strong><br>${esc_(body.goals).replace(/\n/g, '<br>')}</p>`,
-    `<p><a href="${folder.getUrl()}">Open applicant folder</a></p>`,
+    '<p>A new pipeline entry has been recorded.</p>',
+    `<p><strong>Child:</strong> ${esc_(childFirstName)}${childLastName ? ' ' + esc_(childLastName) : ''}${stageName ? ' (stage: ' + esc_(stageName) + ')' : ''}${age ? ', age ' + age : ''}</p>`,
+    `<p><strong>Parent:</strong> ${esc_(parentName)} &lt;<a href="mailto:${esc_(parentEmail)}">${esc_(parentEmail)}</a>&gt;${parentPhone ? ' &middot; ' + esc_(parentPhone) : ''}</p>`,
+    location ? `<p><strong>Location:</strong> ${esc_(location)}</p>` : '',
+    unionStatus ? `<p><strong>Union:</strong> ${esc_(unionStatus)}</p>` : '',
+    priorRep ? `<p><strong>Prior rep:</strong> ${esc_(priorRep)}</p>` : '',
+    goals ? `<p><strong>Goals:</strong><br>${esc_(goals).replace(/\n/g, '<br>')}</p>` : '',
+    folderUrl ? `<p><a href="${folderUrl}">Open applicant folder</a></p>` : '',
+    `<p style="color:#888;font-size:12px">Pipeline row ${rowNumber}${submittedAt ? ' — recorded ' + submittedAt : ''}</p>`,
   ].filter(Boolean).join('\n');
-  MailApp.sendEmail({
-    to: prop_('NOTIFY_EMAIL'),
-    subject,
-    htmlBody,
-    replyTo: body.parentEmail,
-    name: 'LionHeart Intake',
-  });
+
+  try {
+    MailApp.sendEmail({
+      to: prop_('NOTIFY_EMAIL'),
+      subject: subject,
+      htmlBody: htmlBody,
+      replyTo: parentEmail,
+      name: 'LionHeart Intake',
+    });
+    sheet.getRange(rowNumber, NOTIFIED_AT_COL).setValue(new Date());
+    logEvent_('notification_email_sent', { rowNumber: rowNumber, parentEmail: parentEmail });
+  } catch (err) {
+    logEvent_('notification_email_failed', {
+      rowNumber: rowNumber,
+      error: String((err && err.message) || err),
+      stack: err && err.stack,
+    });
+    // Leave Notified At blank so the next edit retries.
+  }
+}
+
+/**
+ * Installable onEdit trigger handler — set this up via Apps Script Triggers UI
+ * (Add Trigger → function: handleSpreadsheetEdit, event source: From spreadsheet,
+ * event type: On edit). Fires for every user cell edit on the Pipeline sheet, which
+ * is how manually added rows reach notifyLisaOfRow. notifyLisaOfRow is idempotent
+ * via the Notified At column, so frequent firing is harmless.
+ *
+ * Programmatic setValue calls (like the one notifyLisaOfRow does to mark notified)
+ * do NOT fire installable triggers, so there's no recursion.
+ */
+function handleSpreadsheetEdit(e) {
+  if (!e || !e.range) return;
+  try {
+    const sheet = e.range.getSheet();
+    const name = sheet.getName();
+    if (name !== 'Pipeline' && name !== 'Sheet1') return;
+    notifyLisaOfRow(e.range.getRow());
+  } catch (err) {
+    logEvent_('handleSpreadsheetEdit_failed', {
+      error: String((err && err.message) || err),
+      stack: err && err.stack,
+    });
+  }
 }
 
 function sendParentConfirmation(body) {
