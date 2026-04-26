@@ -4,3 +4,6 @@
 !.dev.vars.example
 .env*
 !.env.example
+
+# claude code per-developer overrides (settings.json IS committed; .local.json is not)
+.claude/settings.local.json

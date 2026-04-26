@@ -14,7 +14,7 @@
  *
  * Lisa-notification design:
  *   notifyLisaOfRow(rowNumber) is idempotent — it checks the "Notified At" column
- *   (column 41 / AO) and skips rows already notified. Two entry points feed it:
+ *   (column 44 / AR) and skips rows already notified. Two entry points feed it:
  *     1. doPost calls it directly after appendSheetRow — covers form submissions.
  *     2. The installable onEdit trigger (handleSpreadsheetEdit) calls it whenever
  *        any cell is edited on the Pipeline sheet — covers rows added manually by
@@ -195,6 +195,9 @@ function appendSheetRow(body, folder, headshotFile, fullLengthFile) {
     body.hairColor || '',
     body.eyeColor || '',
     body.ethnicity || '',
+    body.shirtSize || '',
+    body.pantsSize || '',
+    body.shoeSize || '',
     body.priorRepresentation || '',
     body.unionStatus || '',
     body.workPermit || '',
@@ -233,11 +236,11 @@ function computeAge_(dobStr) {
 
 /**
  * Idempotent Lisa-notification for a single row of the Pipeline sheet.
- * Skips if already notified (column 41 / AO has a value), or if the row is
+ * Skips if already notified (column 44 / AR has a value), or if the row is
  * incomplete (no parent email or no child first name yet — typical mid-typing state).
  * Marks the row notified ONLY on successful send, so transient failures retry.
  */
-const NOTIFIED_AT_COL = 41;
+const NOTIFIED_AT_COL = 44;
 
 function notifyLisaOfRow(rowNumber) {
   if (!rowNumber || rowNumber <= 1) return;
@@ -262,10 +265,10 @@ function notifyLisaOfRow(rowNumber) {
   const childLastName = values[8] || '';
   const stageName = values[9] || '';
   const age = values[11] || '';
-  const priorRep = values[17] || '';
-  const unionStatus = values[18] || '';
-  const goals = values[33] || '';
-  const folderUrl = values[35] || '';
+  const priorRep = values[20] || '';
+  const unionStatus = values[21] || '';
+  const goals = values[36] || '';
+  const folderUrl = values[38] || '';
 
   if (!parentEmail || !childFirstName) {
     logEvent_('notification_skipped_incomplete', {

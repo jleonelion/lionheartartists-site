@@ -82,6 +82,7 @@ main { max-width: 760px; margin: 0 auto; padding: 3.5rem 1.5rem 5rem; }
 
 .field { margin-bottom: 1.25rem; }
 .field.inline-row { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+.field.inline-row.three-col { grid-template-columns: 1fr 1fr 1fr; }
 .field.inline-row .sub-field { margin-bottom: 0; }
 label {
   display: block; font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase;
@@ -149,6 +150,7 @@ footer a { color: var(--gold); text-decoration: none; }
   main { padding: 2.5rem 1rem 4rem; }
   .form-section { padding: 1.5rem 1.25rem 1rem; }
   .field.inline-row { grid-template-columns: 1fr; gap: 0; }
+  .field.inline-row.three-col { grid-template-columns: 1fr; }
   .field.inline-row .sub-field { margin-bottom: 1.25rem; }
 }
 </style>
@@ -282,12 +284,39 @@ footer a { color: var(--gold); text-decoration: none; }
       <input type="text" id="ethnicity" name="ethnicity">
     </div>
   </div>
+
+  <div class="field inline-row three-col">
+    <div class="sub-field">
+      <label for="shirt-size">Shirt Size <span class="optional">(optional)</span></label>
+      <input type="text" id="shirt-size" name="shirtSize" placeholder="e.g. 10">
+    </div>
+    <div class="sub-field">
+      <label for="pants-size">Pants Size <span class="optional">(optional)</span></label>
+      <input type="text" id="pants-size" name="pantsSize" placeholder="e.g. 8">
+    </div>
+    <div class="sub-field">
+      <label for="shoe-size">Shoe Size <span class="optional">(optional)</span></label>
+      <input type="text" id="shoe-size" name="shoeSize" placeholder="e.g. 4Y">
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="school-type">School Type <span class="optional">(optional)</span></label>
+    <select id="school-type" name="schoolType">
+      <option value="">Select...</option>
+      <option>Traditional</option>
+      <option>Homeschool</option>
+      <option>Online / Virtual</option>
+      <option>Hybrid</option>
+      <option>Not yet in school</option>
+    </select>
+  </div>
 </section>
 
 <!-- SECTION 3: EXPERIENCE -->
 <section class="form-section">
   <h2>Experience &amp; Professional Status</h2>
-  <p class="section-hint">These details help us gauge where your child is in their journey. All optional — but stronger applications tend to share this.</p>
+  <p class="section-hint">These questions are optional, but help us get a better feel of your child's experience.</p>
 
   <div class="field inline-row">
     <div class="sub-field">
@@ -337,6 +366,11 @@ footer a { color: var(--gold); text-decoration: none; }
   </div>
 
   <div class="field">
+    <label for="special-skills">Special Skills <span class="optional">(optional)</span></label>
+    <textarea id="special-skills" name="specialSkills" placeholder="Languages, accents, instruments, sports, dance, martial arts..."></textarea>
+  </div>
+
+  <div class="field">
     <label for="prior-rep">Prior Representation <span class="optional">(optional)</span></label>
     <textarea id="prior-rep" name="priorRepresentation" placeholder="Current or previous agent/manager — who, when, and why the relationship ended. If none, leave blank."></textarea>
   </div>
@@ -349,11 +383,6 @@ footer a { color: var(--gold); text-decoration: none; }
   <div class="field">
     <label for="credits">Credits <span class="optional">(optional)</span></label>
     <textarea id="credits" name="credits" placeholder="Notable projects, roles, campaigns..."></textarea>
-  </div>
-
-  <div class="field">
-    <label for="special-skills">Special Skills <span class="optional">(optional)</span></label>
-    <textarea id="special-skills" name="specialSkills" placeholder="Languages, accents, instruments, sports, dance, martial arts..."></textarea>
   </div>
 </section>
 
@@ -388,7 +417,6 @@ footer a { color: var(--gold); text-decoration: none; }
 <!-- SECTION 5: SOCIAL & LOGISTICS -->
 <section class="form-section">
   <h2>Social Presence &amp; Availability</h2>
-  <p class="section-hint">Relevant for our digital creator and influencer representation track.</p>
 
   <div class="field inline-row">
     <div class="sub-field">
@@ -412,22 +440,9 @@ footer a { color: var(--gold); text-decoration: none; }
     </div>
   </div>
 
-  <div class="field inline-row">
-    <div class="sub-field">
-      <label for="school-type">School Type <span class="optional">(optional)</span></label>
-      <select id="school-type" name="schoolType">
-        <option value="">Select...</option>
-        <option>Traditional</option>
-        <option>Homeschool</option>
-        <option>Online / Virtual</option>
-        <option>Hybrid</option>
-        <option>Not yet in school</option>
-      </select>
-    </div>
-    <div class="sub-field">
-      <label for="availability">Availability &amp; Travel <span class="optional">(optional)</span></label>
-      <input type="text" id="availability" name="availability" placeholder="e.g. Weekdays after 3pm, willing to travel">
-    </div>
+  <div class="field">
+    <label for="availability">Availability &amp; Travel <span class="optional">(optional)</span></label>
+    <input type="text" id="availability" name="availability" placeholder="e.g. Weekdays after 3pm, willing to travel">
   </div>
 </section>
 

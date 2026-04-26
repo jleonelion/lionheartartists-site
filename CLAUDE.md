@@ -36,19 +36,36 @@ The primary phone number `424-777-9493` appears in `index.html` (contact section
 
 ## Development workflow
 
-**Never commit directly to `main`.** For each logical work session, create a feature branch first (e.g. `feature/intake-form-setup`, `fix/nav-a11y`, `content/services-copy`). All edits for that session land on the branch; open a PR into `main` when ready. Rationale: `main` is the GitHub Pages deploy branch — any merge is an immediate production push to `lionheartartists.com`, so the branch + PR gate is the only review step in the pipeline.
+Two long-lived branches drive deploys, and **`main` is production**:
 
-Typical flow:
+- `main` → GitHub Pages → `lionheartartists.com`
+- `staging` → Cloudflare Workers → `https://staging-lionheartartists-site.james-c2a.workers.dev`
+
+Both branches auto-deploy on push, so the gate between them is the only review step in the pipeline. Work always lands on `staging` first, gets eyeballed on the Cloudflare URL, and is promoted to `main` as a separate batch.
+
+**Never commit directly to `main` or `staging`.** Always work on a feature branch (e.g. `feature/intake-form-setup`, `fix/nav-a11y`, `content/services-copy`) and open a PR.
+
+Typical flow for a new change:
 
 ```
-git checkout main && git pull
-git checkout -b feature/<session-scope>
+git checkout staging && git pull        # branch from staging, not main —
+git checkout -b feature/<session-scope> # so you inherit any in-flight work
 # ...edits, commits...
 git push -u origin feature/<session-scope>
-gh pr create
+gh pr create --base staging             # PR into staging, NOT main
 ```
 
-Only commit when the user explicitly asks. Do not merge to `main` without approval.
+After the feature PR merges into `staging`, Cloudflare auto-deploys; verify on the staging URL.
+
+Promoting `staging` → `main` (production release) is a separate, deliberate step:
+
+```
+gh pr create --base main --head staging --title "Release: <summary>"
+```
+
+Review the cumulative diff (it may include several features), merge, and GitHub Pages auto-deploys to `lionheartartists.com`.
+
+Committing and pushing on a feature branch is fine — proceed without waiting for explicit confirmation each time. **Never commit or push directly to `staging` or `main`**, and never merge a PR (especially `staging` → `main`) without explicit approval. Always create the feature branch off `staging` so it inherits any in-flight work.
 
 ## Local preview
 
@@ -60,4 +77,9 @@ python3 -m http.server 8000
 
 ## Deploy
 
-Push to `main`. GitHub Pages serves the repo root at the domain in `CNAME`. There is no CI and no staging environment — a push is a deploy.
+There are two auto-deploys, both on push:
+
+- Push to `staging` → Cloudflare Workers redeploys the preview site. Use this for review before production.
+- Push to `main` → GitHub Pages redeploys `lionheartartists.com` (the domain in `CNAME`). This is production — no other gate.
+
+There is no CI. The branch + PR flow above is the only review step.
