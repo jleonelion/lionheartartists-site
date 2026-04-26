@@ -58,11 +58,11 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 4. The function runs, prints `{"event":"edit_trigger_installed",...}` to the log, and exits.
 5. **Verify:** select **`listTriggers`** in the function dropdown → Run. Check the log output: you should see one trigger entry for `handleSpreadsheetEdit` with eventType `ON_EDIT`. Or open the **Triggers** tab (clock icon) — the new trigger now appears there.
 
-The trigger is idempotent: it skips rows whose `Notified At` cell (column 41 / AO) is already populated, and skips rows that don't yet have a parent email + child first name (i.e., mid-typing state). Re-running `installEditTrigger` is safe — it removes any prior `handleSpreadsheetEdit` triggers first, so duplicates don't pile up.
+The trigger is idempotent: it skips rows whose `Notified At` cell (column 44 / AR) is already populated, and skips rows that don't yet have a parent email + child first name (i.e., mid-typing state). Re-running `installEditTrigger` is safe — it removes any prior `handleSpreadsheetEdit` triggers first, so duplicates don't pile up.
 
 ### 6. Add the Notified At column to the Pipeline sheet
 
-Open the Pipeline sheet, type **`Notified At`** in cell **AO1** (column 41, immediately after `Decline Reason`). The script writes a timestamp here when it successfully emails Lisa. To force a re-send for a row, clear that cell.
+Open the Pipeline sheet, type **`Notified At`** in cell **AR1** (column 44, immediately after `Decline Reason`). The script writes a timestamp here when it successfully emails Lisa. To force a re-send for a row, clear that cell.
 
 ### 7. Wire the deployed web-app URL into the form
 
@@ -100,7 +100,7 @@ If any of steps 4–6 fail, the user sees "We couldn't save your submission." an
 **Phase 3 — Notify (non-critical)**
 
 7. A warm confirmation email goes to the submitting parent.
-8. `notifyLisaOfRow(lastRow)` is invoked, which sends Lisa's notification email and timestamps the row's `Notified At` cell (column AO).
+8. `notifyLisaOfRow(lastRow)` is invoked, which sends Lisa's notification email and timestamps the row's `Notified At` cell (column AR).
 
 Each path is wrapped in try/catch. If either fails, the failure is logged but the submission is still reported as successful to the user — their data is already safely persisted in Phase 2. You'll see the failure in the logs and can manually follow up.
 

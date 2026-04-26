@@ -12,17 +12,27 @@ The Pipeline spreadsheet lives in the Shared Drive (ID `0ABJJvi8pLaB8Uk9PVA`) an
 
 ## Header row
 
-Paste the following as a single row (tab-separated when you paste into Sheets, it fills columns correctly). The final column, **Notified At** (column 41 / AO), is required for the Lisa-notification idempotency check — see "Notification dedup" below.
+Paste the following as a single row (tab-separated when you paste into Sheets, it fills columns correctly). The final column, **Notified At** (column 44 / AR), is required for the Lisa-notification idempotency check — see "Notification dedup" below.
 
 ```
-Submitted At	Status	Parent Name	Parent Email	Parent Phone	Relationship	Location	Child First Name	Child Last Name	Stage Name	Date of Birth	Age	Gender (casting)	Height	Hair	Eyes	Ethnicity / Category	Prior Representation	Union Status	CA Work Permit	Coogan	Training	Credits	Special Skills	Demo Reel	Résumé Link	Self-Tape Setup	Instagram	TikTok	YouTube	Followers	School Type	Availability	Goals / Fit	How Heard	Folder	Headshot	Full-Length	Notes	Decline Reason	Notified At
+Submitted At	Status	Parent Name	Parent Email	Parent Phone	Relationship	Location	Child First Name	Child Last Name	Stage Name	Date of Birth	Age	Gender (casting)	Height	Hair	Eyes	Ethnicity / Category	Shirt Size	Pants Size	Shoe Size	Prior Representation	Union Status	CA Work Permit	Coogan	Training	Credits	Special Skills	Demo Reel	Résumé Link	Self-Tape Setup	Instagram	TikTok	YouTube	Followers	School Type	Availability	Goals / Fit	How Heard	Folder	Headshot	Full-Length	Notes	Decline Reason	Notified At
 ```
+
+### Migrating an existing Pipeline sheet
+
+If you already have a populated Pipeline sheet from before the Shirt/Pants/Shoe columns were added, insert three new columns between **Ethnicity / Category** (column Q) and **Prior Representation**:
+
+1. In Sheets, right-click the column header for **Prior Representation** and choose *Insert 3 columns left*.
+2. Type `Shirt Size`, `Pants Size`, `Shoe Size` into row 1 of the three new columns (R1, S1, T1).
+3. Re-paste `apps-script/Code.gs` into the Apps Script editor and deploy a new version (the script now writes those three values and treats column 44 as Notified At).
+
+Existing rows will have blank size cells, which is fine — the fields are optional.
 
 ### Notification dedup
 
-The Apps Script `notifyLisaOfRow` function writes a timestamp to **column 41 (AO)** when it successfully sends the Lisa-notification email for that row. On every subsequent edit of that row, the onEdit trigger sees the timestamp and skips re-sending. This makes the trigger safe to fire repeatedly (which it does — every keystroke fires onEdit).
+The Apps Script `notifyLisaOfRow` function writes a timestamp to **column 44 (AR)** when it successfully sends the Lisa-notification email for that row. On every subsequent edit of that row, the onEdit trigger sees the timestamp and skips re-sending. This makes the trigger safe to fire repeatedly (which it does — every keystroke fires onEdit).
 
-If you ever need to **force a re-send** for a specific row (e.g., the original notification got eaten by spam), clear the cell in column AO for that row. The next edit on the row will trigger a fresh notification.
+If you ever need to **force a re-send** for a specific row (e.g., the original notification got eaten by spam), clear the cell in column AR for that row. The next edit on the row will trigger a fresh notification.
 
 ## Status values
 
