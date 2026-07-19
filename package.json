@@ -1,0 +1,11 @@
+{
+  "name": "lionheartartists-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test tests/workspace-contract.test.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0"
+  }
+}
