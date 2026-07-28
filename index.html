@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="LionHeart Artists – boutique management for young performers ages 4-18 in Los Angeles. Personalized representation with integrity, grit, and heart.">
+<meta name="description" content="LionHeart Artists - boutique management for young performers ages 4-18 in Los Angeles, with parent guidance on work permits, Coogan accounts, auditions, and set readiness.">
 <meta name="theme-color" content="#1A1A1A">
 <title>LionHeart Artists</title>
 <link rel="icon" href="assets/logo.png">
@@ -40,7 +40,7 @@ nav {
   padding: 0.8rem 2rem; display: flex; align-items: center; justify-content: space-between;
 }
 nav img { height: 70px; margin: -12px 0; }
-nav ul { list-style: none; display: flex; gap: 2rem; }
+nav ul { list-style: none; display: flex; gap: 1.4rem; align-items: center; }
 nav a { color: #fff; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 400; transition: color 0.3s; }
 nav a:hover, nav a.active { color: var(--gold); }
 .nav-toggle { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0.5rem; }
@@ -286,6 +286,35 @@ section { padding: 6rem 2rem; }
   font-size: 0.9rem;
 }
 
+/* PARENT GUIDE */
+.parent-guide { background: #fff; }
+.guide-intro {
+  max-width: 760px; margin: 0 auto 3rem; text-align: center;
+  color: var(--text-light); line-height: 1.8; font-weight: 300; font-size: 0.9rem;
+}
+.guide-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.guide-card {
+  background: var(--cream); border: 1px solid rgba(197,165,90,0.22);
+  padding: 2rem; border-radius: 4px;
+}
+.guide-card h3 {
+  font-size: 1.35rem; font-weight: 500; margin-bottom: 0.9rem; color: var(--dark);
+}
+.guide-card p {
+  color: var(--text-light); line-height: 1.75; font-weight: 300; font-size: 0.85rem;
+}
+.guide-card a { color: var(--dark); text-decoration-color: var(--gold); text-underline-offset: 4px; }
+.guide-note {
+  max-width: 900px; margin: 0 auto; padding: 2rem;
+  border-left: 3px solid var(--gold); background: rgba(197,165,90,0.08);
+}
+.guide-note h3 { font-size: 1.45rem; font-weight: 500; margin-bottom: 0.8rem; }
+.guide-note p { color: var(--text-light); line-height: 1.75; font-weight: 300; font-size: 0.88rem; }
+.guide-note a { color: var(--dark); text-decoration-color: var(--gold); text-underline-offset: 4px; }
+
 /* CONTACT */
 .contact { background: var(--cream); }
 .contact-intro { text-align: center; max-width: 550px; margin: 0 auto 2rem; color: var(--text-light); font-weight: 300; font-size: 0.85rem; line-height: 1.7; }
@@ -379,6 +408,8 @@ footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', 
     height: 60px; 
   }
   .pictures-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .guide-grid { grid-template-columns: 1fr; }
+  .guide-card, .guide-note { padding: 1.5rem; }
   .social-links { gap: 1.5rem; }
   .social-links svg { width: 20px; height: 20px; }
   .photo-banner { grid-template-columns: 1fr 1fr; height: 200px; }
@@ -405,6 +436,7 @@ footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', 
     <li><a href="#services">Services</a></li>
     <li><a href="#industries">What We Represent</a></li>
     <li><a href="#values">Values</a></li>
+    <li><a href="#parent-guide">Parent Guide</a></li>
     <li><a href="#apply">Apply</a></li>
   </ul>
 </nav>
@@ -676,6 +708,46 @@ footer .footer-tagline { color: var(--gold); font-family: 'Cormorant Garamond', 
           <p>Building relationships with co-stars and crew off-camera</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARENT STARTER GUIDE -->
+<section class="parent-guide" id="parent-guide">
+  <p class="section-subtitle">For Parents</p>
+  <h2 class="section-title">Getting Started in Youth Entertainment</h2>
+  <div class="divider"></div>
+  <div class="container">
+    <p class="guide-intro fade-in">When a child begins pursuing professional work, parents quickly become the project manager, paperwork keeper, driver, advocate, and calm voice in the room. These are the early steps families should understand before auditions turn into bookings.</p>
+    <div class="guide-grid">
+      <div class="guide-card fade-in">
+        <h3>Entertainment Work Permit</h3>
+        <p>In California, minors working in entertainment must register for an entertainment work permit through the state. Parents should keep the permit current, track expiration dates, and know that renewals are typically handled every six months. First-time families may also see a short-term permit option through the state system.</p>
+      </div>
+      <div class="guide-card fade-in">
+        <h3>Coogan Account</h3>
+        <p>A blocked Coogan trust account protects a portion of a young performer's earnings. Families are commonly asked for account details before or shortly after a booking, and employers may need the account number to deposit the required withheld wages.</p>
+      </div>
+      <div class="guide-card fade-in">
+        <h3>School & Set Readiness</h3>
+        <p>Professional work can affect school attendance, tutoring, and set-day schedules. Parents should understand how studio teachers, school approvals, call times, rest periods, and production paperwork fit together before accepting work.</p>
+      </div>
+      <div class="guide-card fade-in">
+        <h3>Materials That Book the Room</h3>
+        <p>Young talent usually needs current headshots, accurate measurements, a simple resume, parent contact information, and reliable self-tape access. Keep materials truthful and age-appropriate, and update them as your child grows.</p>
+      </div>
+      <div class="guide-card fade-in">
+        <h3>Audition Logistics</h3>
+        <p>Parents should be ready for fast turnarounds, self-tape instructions, wardrobe notes, location details, and availability checks. A shared calendar, quiet recording spot, and organized file naming can make the process smoother.</p>
+      </div>
+      <div class="guide-card fade-in">
+        <h3>Family Boundaries</h3>
+        <p>A healthy career starts with a healthy child. Decide in advance what your family can manage around school, sleep, travel, finances, social media, and rejection. The right opportunities should support the child, not consume the child.</p>
+      </div>
+    </div>
+    <div class="guide-note fade-in">
+      <h3>Official Resources</h3>
+      <p>For public guidance, start with the <a href="https://www.dir.ca.gov/dlse/entertainment-work-permit.htm" target="_blank" rel="noopener">California entertainment work permit page</a>, the state's <a href="https://www.dir.ca.gov/dlse/EWP-Required-Documents.html" target="_blank" rel="noopener">required document list</a>, and SAG-AFTRA's <a href="https://www.sagaftra.org/membership-benefits/young-performers/coogan-law" target="_blank" rel="noopener">Coogan Law overview</a>. Requirements can change, so parents should verify details with the issuing agency, school, payroll contact, or qualified professional for their specific situation.</p>
     </div>
   </div>
 </section>
