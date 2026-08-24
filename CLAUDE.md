@@ -83,3 +83,17 @@ There are two auto-deploys, both on push:
 - Push to `main` → GitHub Pages redeploys `lionheartartists.com` (the domain in `CNAME`). This is production — no other gate.
 
 There is no CI. The branch + PR flow above is the only review step.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in the shared **Notion Forge Work Queue** (the same cross-repo backlog as `lionclaw` and `hermes-ranger`), not GitHub Issues; file rows with `Owner = lionheartartists-site`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical triage roles map onto the Work Queue's Notion `Status` select (`Triage`, `Info Pending`, `Ready`, `Review Pending`, `Deferred`), mirroring `lionclaw`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `CONTEXT.md` plus `docs/adr/` at the repo root, both created lazily. See `docs/agents/domain.md`.
