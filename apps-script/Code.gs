@@ -8,9 +8,12 @@
  *             error message; nothing has been persisted yet.
  *   PHASE 2 — Persist (CRITICAL): create Drive folder, save uploaded files, append
  *             Pipeline sheet row. Any failure here returns an error to the user.
- *   PHASE 3 — Notify: parent receives a confirmation email (via doPost) AND Lisa
+ *   PHASE 3 — Notify: the parent receives a confirmation email (via doPost) AND Lisa
  *             receives a notification (via notifyLisaOfRow). Both wrap their own
  *             try/catch so a failure is logged without failing the submission.
+ *             The parent confirmation is sent from info@lionheartartists.com (a Google
+ *             Group collaborative inbox) via the Gmail advanced service; Lisa's
+ *             notification still goes out through MailApp as the deploying user.
  *
  * Lisa-notification design:
  *   notifyLisaOfRow(rowNumber) is idempotent — it checks the "Notified At" column
@@ -386,22 +389,49 @@ function listTriggers() {
   return triggers;
 }
 
+// Address the confirmation is sent from — a Google Group collaborative inbox, so
+// replies reach Lisa and James together. It must stay verified under "Send mail as"
+// in the deploying account's Gmail settings, or Gmail.Users.Messages.send rejects it.
+const CONFIRMATION_FROM = 'LionHeart Artists <info@lionheartartists.com>';
+
 function sendParentConfirmation(body) {
-  const subject = 'We received your inquiry — LionHeart Artists';
+  const subject = 'We received your application — LionHeart Artists';
   const htmlBody = [
     `<p>Dear ${esc_(body.parentName)},</p>`,
     `<p>Thank you for reaching out to LionHeart Artists about ${esc_(body.childFirstName)}. We've received your application and are genuinely excited to learn more.</p>`,
-    '<p>Our team reviews every inquiry personally. You can expect to hear back from us within <strong>7–10 business days</strong>.</p>',
-    '<p>If you have questions in the meantime, please call <a href="tel:4247779493">424-777-9493</a>.</p>',
+    '<p>Our team reviews every application personally. You can expect to hear back from us within <strong>7–10 business days</strong>.</p>',
+    '<p>If you have questions in the meantime, just reply to this email or call <a href="tel:4247779493">424-777-9493</a>.</p>',
     '<p>Warmly,<br>Lisa Leone<br>Founder, LionHeart Artists</p>',
-    '<p style="color:#888;font-size:12px;margin-top:2rem">This is an automated confirmation — please do not reply directly to this message.</p>',
   ].join('\n');
-  MailApp.sendEmail({
-    to: body.parentEmail,
-    subject,
-    htmlBody,
-    name: 'LionHeart Artists',
-  });
+  Gmail.Users.Messages.send({ raw: buildRawMessage_(body.parentEmail, subject, htmlBody) }, 'me');
+}
+
+/**
+ * Assemble an RFC 2822 message and base64url-encode it for the Gmail API.
+ * We use the Gmail advanced service rather than GmailApp.sendEmail({ from }) because
+ * GmailApp requires the https://mail.google.com/ scope (full read/modify/delete on the
+ * mailbox). This endpoint is publicly reachable and runs as the deploying user, so it
+ * holds gmail.send — send-only — instead.
+ *
+ * Headers must be 7-bit ASCII: the subject is RFC 2047 encoded and the HTML body is
+ * base64'd in 76-character lines so no line approaches the 998-octet SMTP limit.
+ */
+function buildRawMessage_(to, subject, htmlBody) {
+  const raw = [
+    `From: ${CONFIRMATION_FROM}`,
+    `To: ${to}`,
+    `Subject: =?UTF-8?B?${Utilities.base64Encode(subject, Utilities.Charset.UTF_8)}?=`,
+    'MIME-Version: 1.0',
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    wrapLines_(Utilities.base64Encode(htmlBody, Utilities.Charset.UTF_8)),
+  ].join('\r\n');
+  return Utilities.base64EncodeWebSafe(raw, Utilities.Charset.UTF_8);
+}
+
+function wrapLines_(s) {
+  return s.replace(/(.{76})/g, '$1\r\n');
 }
 
 function esc_(s) {

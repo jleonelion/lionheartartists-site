@@ -1,6 +1,14 @@
 {
   "timeZone": "America/Los_Angeles",
-  "dependencies": {},
+  "dependencies": {
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Gmail",
+        "version": "v1",
+        "serviceId": "gmail"
+      }
+    ]
+  },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8",
   "webapp": {
@@ -12,6 +20,7 @@
     "https://www.googleapis.com/auth/drive",
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/script.send_mail",
+    "https://www.googleapis.com/auth/gmail.send",
     "https://www.googleapis.com/auth/script.scriptapp"
   ]
 }

@@ -36,6 +36,34 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 | `PIPELINE_SHEET_ID` | `1eVTKM8kvaCAj6LOeRhRRapjUk-HB1L_X-gWYbTH-IGM` |
 | `NOTIFY_EMAIL` | `lisa@lionheartartists.com` |
 
+### 3b. Enable the Gmail advanced service and the `info@` send-as alias
+
+The parent confirmation email is sent **from `info@lionheartartists.com`**, a Google Group
+collaborative inbox, so that replies reach Lisa and James together rather than landing in
+James's personal inbox. Two one-time setup steps make that possible.
+
+**Verify the alias** (in `james@lionheartartists.com` Gmail, since the web app executes as
+that user):
+
+1. Settings → **Accounts** → "Send mail as" → **Add another email address**.
+2. Name `LionHeart Artists`, address `info@lionheartartists.com`, leave "Treat as an alias" checked.
+3. Gmail sends a verification code **to the group**, not to James — retrieve it from the group's
+   inbox. If it never arrives, the group's *Post* permission is the usual culprit: widen it
+   temporarily, grab the code, then tighten it back.
+4. Confirm `info@lionheartartists.com` now appears in the "Send mail as" list.
+
+**Enable the advanced service:** Apps Script editor → **Services** (+ icon in the left rail) →
+**Gmail** → **Add**. This is what makes the `Gmail` symbol resolve in `sendParentConfirmation`.
+
+**Why the Gmail advanced service and not `GmailApp`?** `GmailApp.sendEmail({ from })` would be a
+one-liner, but it requires the `https://mail.google.com/` scope — full read, modify, and delete
+across the whole mailbox. `doPost` is an unauthenticated public endpoint running as James, and
+this pipeline handles minors' photographs and dates of birth, so the script holds
+`gmail.send` (send-only) and assembles the raw MIME message itself in `buildRawMessage_`.
+
+If the alias is ever removed or unverified, `Gmail.Users.Messages.send` throws and the failure
+surfaces as `confirmation_email_failed` — the submission itself still succeeds.
+
 ### 4. Deploy as a web app
 
 1. Click **Deploy → New deployment**.
@@ -43,7 +71,7 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 3. Description: `v1 intake endpoint`.
 4. Execute as: **Me (james@lionheartartists.com)**.
 5. Who has access: **Anyone** (no Google sign-in required for applicants).
-6. Click **Deploy**. Google will prompt you to authorize the four scopes in `appsscript.json` — approve them.
+6. Click **Deploy**. Google will prompt you to authorize the scopes in `appsscript.json` — approve them. If you are re-deploying after a scope change (e.g. the `gmail.send` addition), Google re-prompts; read the new scope before approving.
 7. **Copy the web app URL.** It looks like `https://script.google.com/macros/s/AKfy.../exec`.
 
 ### 5. Install the onEdit trigger (one-time, runs from the editor)
@@ -99,7 +127,7 @@ If any of steps 4–6 fail, the user sees "We couldn't save your submission." an
 
 **Phase 3 — Notify (non-critical)**
 
-7. A warm confirmation email goes to the submitting parent.
+7. A warm confirmation email goes to the submitting parent, sent from `info@lionheartartists.com` so replies land in the shared inbox.
 8. `notifyLisaOfRow(lastRow)` is invoked, which sends Lisa's notification email and timestamps the row's `Notified At` cell (column AR).
 
 Each path is wrapped in try/catch. If either fails, the failure is logged but the submission is still reported as successful to the user — their data is already safely persisted in Phase 2. You'll see the failure in the logs and can manually follow up.
@@ -156,7 +184,8 @@ When the basic flow is stable, set up a Google Cloud Logging filter on `severity
 
 ## Quotas (for reference)
 
-- `MailApp.sendEmail`: 100/day on a consumer Gmail, **1500/day on Workspace** — far above expected intake volume.
+- `MailApp.sendEmail` (Lisa's notification): 100/day on a consumer Gmail, **1500/day on Workspace** — far above expected intake volume.
+- `Gmail.Users.Messages.send` (parent confirmation): draws on the same Workspace sending limits, not the Apps Script quota.
 - `UrlFetchApp` (for Turnstile verify): 20,000/day.
 - Drive uploads: effectively unlimited for this volume.
 
@@ -172,4 +201,4 @@ Then test a full submission through `apply.html`. Check:
 - A new folder appears under `Applicants/<year>/`
 - A row appears in the Pipeline sheet with `Status = New`
 - Lisa receives the notification email
-- The submitting email address receives the confirmation
+- The submitting email address receives the confirmation, and its `From` reads `LionHeart Artists <info@lionheartartists.com>` — reply to it and check the reply arrives in the group inbox
