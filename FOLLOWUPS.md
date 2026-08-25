@@ -10,7 +10,7 @@ Tracked work items deferred from the initial intake-pipeline build. Roughly orde
 
 ## Email / DNS
 
-- **Route DMARC aggregate reports somewhere we actually read them.** `_dmarc.lionheartartists.com` currently sets `rua=mailto:dmarc_rua@onsecureserver.net` — a leftover from the pre-Cloudflare registrar. Nobody at LionHeart has ever seen a report, and the policy is already `p=quarantine`, so an authentication break would silently quarantine our mail with no signal. Sign up at https://dmarc.postmarkapp.com (free, no account required, weekly email digest), then replace the whole record value in Cloudflare DNS with `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:<address Postmark issues>;`. Drop the `onsecureserver.net` destination rather than keeping it alongside.
+- **Ramp DMARC back to `p=quarantine`.** Aggregate reports now flow to Postmark (`rua=mailto:re+dnjfci9j2pk@dmarc.postmarkapp.com`, free weekly digest at https://dmarc.postmarkapp.com), replacing the pre-Cloudflare registrar address nobody read. Adopting Postmark's suggested starter record moved policy from `p=quarantine` down to `p=none`, which is monitor-only — mail forging the domain is currently delivered rather than quarantined. Read two or three weekly digests to confirm no legitimate sender is failing alignment, then restore enforcement in Cloudflare DNS: set `p=quarantine` and `sp=quarantine` on the `_dmarc` TXT record, keeping the Postmark `rua`. Longer term `p=reject` is the destination.
 
 ## Site infrastructure
 
