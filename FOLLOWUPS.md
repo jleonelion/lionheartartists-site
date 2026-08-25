@@ -5,12 +5,12 @@ Tracked work items deferred from the initial intake-pipeline build. Roughly orde
 ## Operations & monitoring
 
 - **Cloud Logging alert on Apps Script errors.** Apps Script writes structured `console.error` lines (event names listed in `apps-script/README.md`). In Google Cloud Logging, build a filter like `severity=ERROR AND resource.type="app_script_function" AND jsonPayload.event=~"_failed|_error"` and route matches to an email/Slack alert via Cloud Monitoring. Most important alerts: `persist_failed` (user-facing failure), `turnstile_error` (verify path broken), `notification_email_failed` / `confirmation_email_failed` (silent partial failures).
-- **Periodic deliverability audit.** Spot-check that confirmation emails to applicants aren't landing in spam, and that DKIM/SPF/DMARC stay aligned (see SPF gap below).
+- **Periodic deliverability audit.** Spot-check that confirmation emails to applicants aren't landing in spam, and that DKIM/SPF/DMARC stay aligned.
 - **Pipeline-sheet hygiene.** Optional cosmetic: rename `Sheet1` tab to `Pipeline` (script handles either), freeze row 1, add filter view, conditional formatting on Status column.
 
 ## Email / DNS
 
-- **Add missing SPF record.** During the DNS migration to Cloudflare we noticed `lionheartartists.com` has DKIM and DMARC but no `v=spf1 include:_spf.google.com ~all` TXT record. Outbound Workspace mail is currently relying on DKIM alone. Add the SPF record in Cloudflare DNS (Type TXT, Name @, Content `v=spf1 include:_spf.google.com ~all`, Proxy DNS-only).
+- **Route DMARC aggregate reports somewhere we actually read them.** `_dmarc.lionheartartists.com` currently sets `rua=mailto:dmarc_rua@onsecureserver.net` — a leftover from the pre-Cloudflare registrar. Nobody at LionHeart has ever seen a report, and the policy is already `p=quarantine`, so an authentication break would silently quarantine our mail with no signal. Sign up at https://dmarc.postmarkapp.com (free, no account required, weekly email digest), then replace the whole record value in Cloudflare DNS with `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:<address Postmark issues>;`. Drop the `onsecureserver.net` destination rather than keeping it alongside.
 
 ## Site infrastructure
 
