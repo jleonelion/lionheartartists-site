@@ -20,7 +20,7 @@ If you ever need to re-create these from scratch, the structure is: `Applicants/
 
 ### 2. Create the Apps Script project
 
-1. Open `script.google.com` → **New project**. Name it `LionHeart Artists — Talent Intake`.
+1. Open `script.google.com` → **New project**. Name it `LionHeart Artists — Talent Intake`. (Already done — the live project is [`LionHeart Artists — Talent Intake`](https://script.google.com/home/projects/1VSXdn9xRMpeTIHMjn5v3dOQ1NmsWmd9lJeGBPIVj2AtHvaSRcgohJqqX/edit). Sign in as `james@lionheartartists.com`; if you have several Google accounts signed in, Google rewrites the URL with a `/u/<n>/` account index of its own accord.)
 2. Replace the default `Code.gs` contents with the contents of `Code.gs` in this directory.
 3. Click the gear icon → **Show "appsscript.json" manifest file in editor**, then replace it with the `appsscript.json` in this directory.
 
@@ -141,7 +141,7 @@ When Lisa or James types a new row directly in the Sheets UI, the Apps Script `h
 Every meaningful event emits a structured JSON line via `console.log` / `console.error` (`*_failed` and `*_error` events use `console.error`, surfacing as ERROR severity in Cloud Logging).
 
 **To view in real time:**
-1. Open the Apps Script editor at `script.google.com` and select the project
+1. Open the [Apps Script project](https://script.google.com/home/projects/1VSXdn9xRMpeTIHMjn5v3dOQ1NmsWmd9lJeGBPIVj2AtHvaSRcgohJqqX/edit)
 2. Click the **Executions** icon in the left sidebar — it sits below **Triggers** (the clock icon) and shows a list view (icon looks like horizontal lines / a play arrow). The Executions panel lists every recent script run.
 3. **Click anywhere on a row** to expand it inline. The structured log lines (and any stack traces) appear beneath the row.
 4. Status `Completed` does **not** mean "succeeded for the user" — `doPost` always finishes cleanly because errors are caught and returned as JSON. Look at the actual log lines: an `event:"persist_failed"` or `event:"*_failed"` line indicates a real problem.
