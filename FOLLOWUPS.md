@@ -4,7 +4,7 @@ Tracked work items deferred from the initial intake-pipeline build. Roughly orde
 
 ## Operations & monitoring
 
-- **Cloud Logging alert on Apps Script errors.** Apps Script writes structured `console.error` lines (event names listed in `apps-script/README.md`). In Google Cloud Logging, build a filter like `severity=ERROR AND resource.type="app_script_function" AND jsonPayload.event=~"_failed|_error"` and route matches to an email/Slack alert via Cloud Monitoring. Most important alerts: `persist_failed` (user-facing failure), `turnstile_error` (verify path broken), `notification_email_failed` / `confirmation_email_failed` (silent partial failures).
+- **Cloud Logging alert on Apps Script errors.** Now straightforward: the script is attached to the standard Cloud project `talent-intake` (number `451087517085`), so its logs are queryable directly. In Cloud Logging, build a filter like `severity=ERROR AND resource.type="app_script_function" AND jsonPayload.event=~"_failed|_error"` and route matches to email via Cloud Monitoring. Most important alerts: `persist_failed` (user-facing failure, nothing saved), `turnstile_error` (verify path broken), `notification_email_failed` / `confirmation_email_failed` (silent partial failures — the applicant still sees success).
 - **Periodic deliverability audit.** Spot-check that confirmation emails to applicants aren't landing in spam, and that DKIM/SPF/DMARC stay aligned.
 - **Pipeline-sheet hygiene.** Optional cosmetic: rename `Sheet1` tab to `Pipeline` (script handles either), freeze row 1, add filter view, conditional formatting on Status column.
 
