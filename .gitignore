@@ -8,3 +8,6 @@ node_modules/
 
 # claude code per-developer overrides (settings.json IS committed; .local.json is not)
 .claude/settings.local.json
+
+# clasp (Apps Script CLI) — per-developer, holds scriptId/projectId
+.clasp.json

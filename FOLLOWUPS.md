@@ -4,13 +4,13 @@ Tracked work items deferred from the initial intake-pipeline build. Roughly orde
 
 ## Operations & monitoring
 
-- **Cloud Logging alert on Apps Script errors.** Apps Script writes structured `console.error` lines (event names listed in `apps-script/README.md`). In Google Cloud Logging, build a filter like `severity=ERROR AND resource.type="app_script_function" AND jsonPayload.event=~"_failed|_error"` and route matches to an email/Slack alert via Cloud Monitoring. Most important alerts: `persist_failed` (user-facing failure), `turnstile_error` (verify path broken), `notification_email_failed` / `confirmation_email_failed` (silent partial failures).
+- **Cloud Logging alert on Apps Script errors.** Now straightforward: the script is attached to the standard Cloud project `talent-intake` (number `451087517085`), so its logs are queryable directly. In Cloud Logging, build a filter like `severity=ERROR AND resource.type="app_script_function" AND jsonPayload.event=~"_failed|_error"` and route matches to email via Cloud Monitoring. Most important alerts: `persist_failed` (user-facing failure, nothing saved), `turnstile_error` (verify path broken), `notification_email_failed` / `confirmation_email_failed` (silent partial failures — the applicant still sees success).
 - **Periodic deliverability audit.** Spot-check that confirmation emails to applicants aren't landing in spam, and that DKIM/SPF/DMARC stay aligned.
 - **Pipeline-sheet hygiene.** Optional cosmetic: rename `Sheet1` tab to `Pipeline` (script handles either), freeze row 1, add filter view, conditional formatting on Status column.
 
 ## Email / DNS
 
-- **Route DMARC aggregate reports somewhere we actually read them.** `_dmarc.lionheartartists.com` currently sets `rua=mailto:dmarc_rua@onsecureserver.net` — a leftover from the pre-Cloudflare registrar. Nobody at LionHeart has ever seen a report, and the policy is already `p=quarantine`, so an authentication break would silently quarantine our mail with no signal. Sign up at https://dmarc.postmarkapp.com (free, no account required, weekly email digest), then replace the whole record value in Cloudflare DNS with `v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:<address Postmark issues>;`. Drop the `onsecureserver.net` destination rather than keeping it alongside.
+- **Ramp DMARC back to `p=quarantine`.** Aggregate reports now flow to Postmark (`rua=mailto:re+dnjfci9j2pk@dmarc.postmarkapp.com`, free weekly digest at https://dmarc.postmarkapp.com), replacing the pre-Cloudflare registrar address nobody read. Adopting Postmark's suggested starter record moved policy from `p=quarantine` down to `p=none`, which is monitor-only — mail forging the domain is currently delivered rather than quarantined. Read two or three weekly digests to confirm no legitimate sender is failing alignment, then restore enforcement in Cloudflare DNS: set `p=quarantine` and `sp=quarantine` on the `_dmarc` TXT record, keeping the Postmark `rua`. Longer term `p=reject` is the destination.
 
 ## Site infrastructure
 
