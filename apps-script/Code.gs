@@ -398,10 +398,12 @@ function sendParentConfirmation(body) {
   const subject = 'We received your application — LionHeart Artists';
   const htmlBody = [
     `<p>Dear ${esc_(body.parentName)},</p>`,
-    `<p>Thank you for reaching out to LionHeart Artists about ${esc_(body.childFirstName)}. We've received your application and are genuinely excited to learn more.</p>`,
-    '<p>Our team reviews every application personally. You can expect to hear back from us within <strong>7–10 business days</strong>.</p>',
-    '<p>If you have questions in the meantime, just reply to this email or call <a href="tel:4247779493">424-777-9493</a>.</p>',
-    '<p>Warmly,<br>Lisa Leone<br>Founder, LionHeart Artists</p>',
+    '<p>Thank you for submitting your materials to Lionheart Artists Management. We truly appreciate your interest in being considered for representation and the time you took to share your work with us!</p>',
+    '<p>Our team will carefully review your submission and consider whether your talent and career goals may be a good fit for Lionheart Artists. Due to the volume of submissions we receive, we are only able to personally respond to those we would like to invite to the next step, which may include a meeting or additional conversation.</p>',
+    '<p>If you do not hear from us, please know that it is not a reflection of your talent or potential. We are simply looking for the right fit for our roster and the opportunities we are able to provide.</p>',
+    '<p>We wish you continued success in your career and thank you again for considering Lionheart Artists Management.</p>',
+    '<p>Warmly,<br><strong>Lionheart Artists Management</strong></p>',
+    '<p><em>Guiding young talent with integrity, grit and heart.</em></p>',
   ].join('\n');
   Gmail.Users.Messages.send({ raw: buildRawMessage_(body.parentEmail, subject, htmlBody) }, 'me');
 }
