@@ -4,18 +4,18 @@ How the engineering skills should consume this repo's domain documentation when 
 
 ## Before exploring, read these
 
-- **`CONTEXT.md`** at the repo root (the domain glossary), if it exists.
+- **`GLOSSARY.md`** at the repo root (the domain glossary), if it exists.
 - **`docs/adr/`** — read ADRs that touch the area you're about to work in.
 
 If any of these files don't exist, **proceed silently**. Don't flag their absence or suggest creating them upfront. The `/domain-modeling` skill (reached via `/grill-with-docs` and `/improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
 
-Note: for this repo, the authoritative operational context already lives in `CLAUDE.md` (page structure and anchor IDs, styling conventions, the intake pipeline data flow, branch/deploy workflow) and in `SHEET_SCHEMA.md` (the Pipeline Sheet column order that `apps-script/Code.gs` depends on by position). Read those alongside any `CONTEXT.md`.
+Note: for this repo, the authoritative operational context already lives in `CLAUDE.md` (page structure and anchor IDs, styling conventions, the intake pipeline data flow, branch/deploy workflow) and in `SHEET_SCHEMA.md` (the Pipeline Sheet column order that `apps-script/Code.gs` depends on by position). Read those alongside any `GLOSSARY.md`.
 
 ## File structure (single-context)
 
 ```
 /
-├── CONTEXT.md          ← created lazily by /domain-modeling
+├── GLOSSARY.md         ← created lazily by /domain-modeling
 ├── docs/
 │   ├── adr/            ← created lazily as decisions get recorded
 │   └── agents/         ← this directory (issue tracker, triage labels, domain rules)
@@ -24,7 +24,7 @@ Note: for this repo, the authoritative operational context already lives in `CLA
 
 ## Use the glossary's vocabulary
 
-When your output names a domain concept (a Work Queue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md` / `CLAUDE.md`. Don't drift to synonyms the glossary explicitly avoids.
+When your output names a domain concept (a Work Queue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `GLOSSARY.md` / `CLAUDE.md`. Don't drift to synonyms the glossary explicitly avoids.
 
 If the concept you need isn't in the glossary yet, that's a signal — either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `/domain-modeling`).
 
