@@ -12,3 +12,6 @@ node_modules/
 # clasp (Apps Script CLI) — per-developer, holds scriptId/projectId
 .clasp.json
 .gstack/
+
+# Local coding-agent git worktrees
+.worktrees/
